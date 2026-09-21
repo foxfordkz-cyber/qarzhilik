@@ -1,0 +1,15 @@
+{
+  "name": "qarzhy",
+  "version": "1.0.0",
+  "private": true,
+  "description": "QARZHЫ — қаржылық сауаттылық платформасы (Cloudflare Workers + D1)",
+  "scripts": {
+    "dev": "wrangler dev",
+    "db:migrate:local": "wrangler d1 migrations apply qarzhy-db --local",
+    "db:migrate": "wrangler d1 migrations apply qarzhy-db --remote",
+    "deploy": "wrangler deploy"
+  },
+  "devDependencies": {
+    "wrangler": "^4.135.0"
+  }
+}

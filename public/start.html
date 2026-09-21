@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="kk">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Бастау — QARZHЫ</title>
+  <meta name="description" content="QARZHЫ платформасына кіру немесе тіркелу.">
+  <meta name="theme-color" content="#0c3a25">
+  <link rel="icon" href="/favicon.png" type="image/png">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Unbounded:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body data-page="start">
+  <div class="auth-page">
+    <aside class="auth-visual">
+      <a class="logo" href="/" aria-label="QARZHЫ — басты бет"><img class="logo-mark" src="/img/logo-mark.png" alt="" width="202" height="192"><img class="logo-word" src="/img/logo-word.png" alt="QARZHЫ" width="518" height="96"></a>
+      <blockquote>
+        <p>Қаржыны түсін.<br><span class="accent" data-ru="Принимай осознанные">Саналы шешім</span> қабылда.</p>
+        <span>Қаржылық білім — жақсы болашақ кепілі</span>
+      </blockquote>
+    </aside>
+
+    <main class="auth-main">
+      <div class="auth-card">
+        <div class="auth-top-row">
+          <a href="/" class="btn btn-sm btn-outline"><span data-icon="arrow-left"></span> Басты бет</a>
+          <div data-lang-switch></div>
+        </div>
+        <h1 id="auth-title">Қош келдіңіз!</h1>
+        <p class="sub" id="auth-sub">Жеке кабинетке кіріп, курсты жалғастырыңыз.</p>
+
+        <div class="tabs" role="tablist">
+          <button type="button" role="tab" data-tab="login" class="is-active" aria-selected="true">Кіру</button>
+          <button type="button" role="tab" data-tab="register" aria-selected="false">Тіркелу</button>
+        </div>
+
+        <form class="form" id="login-form" novalidate>
+          <div class="form-error" role="alert"></div>
+          <div class="field"><label for="l-email">Email</label><input id="l-email" name="email" type="email" autocomplete="email" required placeholder="name@mail.kz"></div>
+          <div class="field"><label for="l-pass">Құпиясөз</label><input id="l-pass" name="password" type="password" autocomplete="current-password" required minlength="6" placeholder="••••••"></div>
+          <button class="btn btn-orange btn-lg" type="submit">Кіру</button>
+        </form>
+
+        <form class="form" id="register-form" hidden novalidate>
+          <div class="form-error" role="alert"></div>
+          <div class="field"><label for="r-name">Аты-жөні</label><input id="r-name" name="name" type="text" autocomplete="name" required minlength="2" placeholder="Мысалы: Айгерім Сейітова"></div>
+          <div class="field"><label for="r-email">Email</label><input id="r-email" name="email" type="email" autocomplete="email" required placeholder="name@mail.kz"></div>
+          <div class="field"><label for="r-pass">Құпиясөз</label><input id="r-pass" name="password" type="password" autocomplete="new-password" required minlength="6" placeholder="Кемінде 6 таңба"></div>
+          <button class="btn btn-orange btn-lg" type="submit">Тіркелу</button>
+        </form>
+
+        <p class="auth-foot">Тіркелу арқылы сіз курстарды алып, прогресіңізді сақтай аласыз.</p>
+      </div>
+    </main>
+  </div>
+
+  <script src="/js/i18n-ru.js"></script>
+  <script src="/js/app.js"></script>
+  <script>
+  (function () {
+    const { api, me, qs } = window.QZ;
+    const safeNext = (() => {
+      const n = qs("next") || "";
+      return n.startsWith("/") && !n.startsWith("//") ? n : "/cabinet";
+    })();
+
+    const tabs = document.querySelectorAll("[data-tab]");
+    const forms = { login: document.getElementById("login-form"), register: document.getElementById("register-form") };
+    const copy = {
+      login: ["Қош келдіңіз!", "Жеке кабинетке кіріп, курсты жалғастырыңыз."],
+      register: ["Тіркелу", "Бірнеше секундта аккаунт ашып, оқуды бастаңыз."],
+    };
+    function show(tab) {
+      tabs.forEach((b) => { const on = b.dataset.tab === tab; b.classList.toggle("is-active", on); b.setAttribute("aria-selected", String(on)); });
+      Object.entries(forms).forEach(([k, f]) => (f.hidden = k !== tab));
+      document.getElementById("auth-title").textContent = copy[tab][0];
+      document.getElementById("auth-sub").textContent = copy[tab][1];
+    }
+    tabs.forEach((b) => b.addEventListener("click", () => show(b.dataset.tab)));
+    show(qs("mode") === "register" ? "register" : "login");
+
+    me().then(({ user }) => { if (user) location.replace(safeNext); });
+
+    Object.entries(forms).forEach(([kind, form]) => {
+      form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const err = form.querySelector(".form-error");
+        const btn = form.querySelector("[type=submit]");
+        err.classList.remove("is-show");
+        if (!form.checkValidity()) {
+          const bad = form.querySelector(":invalid");
+          err.textContent = bad.type === "email" ? "Email дұрыс емес" : bad.name === "password" ? "Құпиясөз кемінде 6 таңбадан тұруы керек" : "Барлық өрістерді толтырыңыз";
+          err.classList.add("is-show");
+          bad.focus();
+          return;
+        }
+        btn.disabled = true;
+        try {
+          await api(`/api/${kind}`, Object.fromEntries(new FormData(form)));
+          location.href = safeNext;
+        } catch (ex) {
+          err.textContent = ex.message;
+          err.classList.add("is-show");
+          btn.disabled = false;
+        }
+      });
+    });
+  })();
+  </script>
+</body>
+</html>
