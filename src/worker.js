@@ -7,8 +7,10 @@
 //   POST /api/progress   { course, topic, quizScore, quizTotal }
 //   GET  /api/rates      — Ұлттық Банктің ресми бағамдары
 //   GET  /api/bank-rates — банктердің айырбастау бағамдары (сатып алу / сату)
+//   GET  /api/bank-products — банктердің депозиттері мен несиелері (күнделікті жаңартылады)
 
 import { fetchBankRates } from "./fx.js";
+import { refreshBankProducts, readBankProducts } from "./products.js";
 
 const COURSES = ["life", "pro"];
 const SESSION_COOKIE = "qz_session";
@@ -32,6 +34,11 @@ export default {
       return json({ error: "Сервер қатесі. Кейінірек қайталап көріңіз." }, 500);
     }
   },
+
+  // Күнделікті cron: банк өнімдерін жаңарту
+  async scheduled(event, env, ctx) {
+    ctx.waitUntil(refreshBankProducts(env));
+  },
 };
 
 async function handleApi(request, env, ctx, url) {
@@ -39,6 +46,7 @@ async function handleApi(request, env, ctx, url) {
 
   if (route === "GET /api/rates") return rates(ctx);
   if (route === "GET /api/bank-rates") return bankRates(ctx);
+  if (route === "GET /api/bank-products") return bankProducts(env);
 
   if (request.method === "POST" && !isSameOrigin(request, url)) {
     return json({ error: "Рұқсат жоқ" }, 403);
@@ -218,6 +226,11 @@ async function bankRates(ctx) {
   const response = json({ updatedAt, banks }, 200, { "Cache-Control": `public, max-age=${BANK_RATES_TTL}` });
   ctx.waitUntil(cache.put(cacheKey, response.clone()));
   return response;
+}
+
+async function bankProducts(env) {
+  const data = await readBankProducts(env);
+  return json(data, 200, { "Cache-Control": "public, max-age=900" });
 }
 
 function parseRates(xml) {

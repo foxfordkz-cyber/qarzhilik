@@ -1,5 +1,5 @@
 {
- "updated": "21.09.2026",
+ "snapshot": "2026-09-21",
  "source": "Банктердің ресми сайттары",
  "banks": [
   {
@@ -13,10 +13,11 @@
    "ratesUrl": "https://halykbank.kz/exchange-rates",
    "deposits": [
     {
-     "name": "Әмбебап",
+     "name": "Универсальный",
+     "nameKk": "Әмбебап",
      "rate": 14.32,
      "gesv": 15.3,
-     "term": "6 айдан",
+     "termMonths": 6,
      "currencies": [
       "KZT",
       "USD",
@@ -25,10 +26,11 @@
      "url": "https://halykbank.kz/deposit/srochnye-vklady"
     },
     {
-     "name": "Барынша жоғары",
+     "name": "Максимальный",
+     "nameKk": "Барынша жоғары",
      "rate": 15.8,
      "gesv": 17,
-     "term": "6 айдан",
+     "termMonths": 6,
      "currencies": [
       "KZT",
       "USD"
@@ -37,9 +39,10 @@
     },
     {
      "name": "QORJIN",
+     "nameKk": null,
      "rate": 16.45,
      "gesv": 17.75,
-     "term": "3 айдан",
+     "termMonths": 3,
      "currencies": [
       "KZT",
       "USD"
@@ -47,10 +50,11 @@
      "url": "https://halykbank.kz/deposit/srochnye-vklady"
     },
     {
-     "name": "AQYL білім салымы",
+     "name": "Образовательный вклад AQYL",
+     "nameKk": "AQYL білім салымы",
      "rate": 14.3,
      "gesv": 15.5,
-     "term": "36 айдан",
+     "termMonths": 36,
      "currencies": [
       "KZT"
      ],
@@ -59,77 +63,76 @@
    ],
    "loans": [
     {
-     "type": "Кепілсіз қолма-қол несие",
+     "typeKey": "cash",
      "brand": null,
      "rateFrom": 17.5,
      "gesvFrom": 28.8,
-     "maxAmount": "8 000 000 ₸ дейін",
-     "maxTerm": "5 жылға дейін",
+     "maxAmount": 8000000,
+     "maxTermMonths": 60,
      "special": null,
      "url": "https://halykbank.kz/credit/bez-zaloga"
     },
     {
-     "type": "Қайта қаржыландыру",
+     "typeKey": "refi",
      "brand": null,
      "rateFrom": 17.5,
      "gesvFrom": 28.8,
-     "maxAmount": "8 000 000 ₸ дейін",
-     "maxTerm": "5 жылға дейін",
+     "maxAmount": 8000000,
+     "maxTermMonths": 60,
      "special": null,
      "url": "https://halykbank.kz/credit/refinans"
     },
     {
-     "type": "Кепілді несие",
+     "typeKey": "secured",
      "brand": null,
      "rateFrom": 20,
      "gesvFrom": 23.88,
      "maxAmount": null,
-     "maxTerm": "120 айға дейін",
+     "maxTermMonths": 120,
      "special": null,
      "url": "https://halykbank.kz/credit/na-neotlozhnye-nuzhdy"
     },
     {
-     "type": "Автонесие",
+     "typeKey": "auto",
      "brand": null,
      "rateFrom": 23,
      "gesvFrom": 25.1,
-     "maxAmount": "30 000 000 ₸ дейін",
-     "maxTerm": "84 айға дейін",
+     "maxAmount": 30000000,
+     "maxTermMonths": 84,
      "special": null,
      "url": "https://halykbank.kz/credit/v-salonah-partnerah"
     },
     {
-     "type": "Жеңілдетілген автонесие",
+     "typeKey": "autoGov",
      "brand": "БРК бағдарламасы",
      "rateFrom": 4,
      "gesvFrom": 4.1,
-     "maxAmount": "10 000 000 ₸ дейін",
-     "maxTerm": "7 жылға дейін",
-     "special": "Мемлекеттік бағдарлама",
+     "maxAmount": 10000000,
+     "maxTermMonths": 84,
+     "special": "gov",
      "url": "https://halykbank.kz/credits/avtocredit"
     },
     {
-     "type": "Ипотека",
+     "typeKey": "mortgage",
      "brand": null,
      "rateFrom": 19.5,
      "gesvFrom": 21.59,
      "maxAmount": null,
-     "maxTerm": "20 жылға дейін",
+     "maxTermMonths": 240,
      "special": null,
      "url": "https://halykbank.kz/credit/cifrovaya-ipoteka"
     },
     {
-     "type": "Мемлекеттік ипотека",
+     "typeKey": "mortgageGov",
      "brand": "«7-20-25»",
      "rateFrom": 7,
      "gesvFrom": 7.24,
-     "maxAmount": "30 000 000 ₸ дейін",
-     "maxTerm": "25 жылға дейін",
-     "special": "Мемлекеттік бағдарлама",
+     "maxAmount": 30000000,
+     "maxTermMonths": 300,
+     "special": "gov",
      "url": "https://halykbank.kz/credit/7-20-25-new"
     }
-   ],
-   "note": null
+   ]
   },
   {
    "id": "bereke",
@@ -141,8 +144,7 @@
    "loansUrl": "https://berekebank.kz/ru/personal/credits",
    "ratesUrl": "https://berekebank.kz/ru/personal/fx_currency_exchange",
    "deposits": [],
-   "loans": [],
-   "note": "Мөлшерлемелер банктің сайтында"
+   "loans": []
   },
   {
    "id": "freedom",
@@ -155,10 +157,11 @@
    "ratesUrl": "https://bankffin.kz/ru/exchange-rates",
    "deposits": [
     {
-     "name": "«Стратегия» Депозиті",
+     "name": "Депозит «Стратегия»",
+     "nameKk": "«Стратегия» Депозиті",
      "rate": 17.89,
      "gesv": 19.5,
-     "term": "3 айдан",
+     "termMonths": 3,
      "currencies": [
       "KZT",
       "USD"
@@ -166,20 +169,22 @@
      "url": "https://bankffin.kz/ru/deposits/physical/strategy"
     },
     {
-     "name": "«Капитал» Депозиті",
+     "name": "Депозит «Капитал»",
+     "nameKk": "«Капитал» Депозиті",
      "rate": 16.75,
      "gesv": 18.26,
-     "term": "1 айдан",
+     "termMonths": 1,
      "currencies": [
       "KZT"
      ],
      "url": "https://bankffin.kz/ru/deposits/physical/capital"
     },
     {
-     "name": "«Копилка» депозиті",
+     "name": "Депозит «Копилка»",
+     "nameKk": "«Копилка» депозиті",
      "rate": 15.4,
      "gesv": 16.55,
-     "term": "6 айдан",
+     "termMonths": 6,
      "currencies": [
       "KZT",
       "USD",
@@ -189,10 +194,11 @@
      "url": "https://bankffin.kz/ru/deposits/physical/moneybox"
     },
     {
-     "name": "Талап етілгенге дейін",
+     "name": "До востребования",
+     "nameKk": "Талап етілгенге дейін",
      "rate": null,
      "gesv": 0.1,
-     "term": "мерзімсіз",
+     "termMonths": 0,
      "currencies": [
       "KZT",
       "USD",
@@ -207,37 +213,36 @@
    ],
    "loans": [
     {
-     "type": "Кепілді несие",
+     "typeKey": "secured",
      "brand": null,
      "rateFrom": 21,
      "gesvFrom": 23.2,
-     "maxAmount": "100 000 000 ₸ дейін",
-     "maxTerm": "120 айға дейін",
+     "maxAmount": 100000000,
+     "maxTermMonths": 120,
      "special": null,
      "url": "https://cash-loans.bankffin.kz/ru"
     },
     {
-     "type": "Автонесие",
+     "typeKey": "auto",
      "brand": null,
      "rateFrom": 0.1,
      "gesvFrom": 1.2,
      "maxAmount": null,
-     "maxTerm": "7 жылға дейін",
-     "special": "Серіктес/субсидияланған ұсыныс",
+     "maxTermMonths": 84,
+     "special": "partner",
      "url": "https://auto.bankffin.kz/"
     },
     {
-     "type": "Ипотека",
+     "typeKey": "mortgage",
      "brand": null,
      "rateFrom": null,
      "gesvFrom": 7.2,
-     "maxAmount": "70 млн ₸ дейін",
-     "maxTerm": "20 жылға дейін",
+     "maxAmount": 70000000,
+     "maxTermMonths": 240,
      "special": null,
      "url": "https://bankffin.kz/ipoteka/"
     }
-   ],
-   "note": null
+   ]
   },
   {
    "id": "kaspi",
@@ -251,9 +256,10 @@
    "deposits": [
     {
      "name": "Kaspi Депозит",
+     "nameKk": null,
      "rate": 14.1,
      "gesv": 15,
-     "term": "12 айдан",
+     "termMonths": 12,
      "currencies": [
       "KZT",
       "USD"
@@ -261,10 +267,11 @@
      "url": "https://kaspi.kz/deposit"
     },
     {
-     "name": "Жинақтаушы Депозит",
+     "name": "Накопительный Депозит",
+     "nameKk": "Жинақтаушы Депозит",
      "rate": 17.52,
      "gesv": 19,
-     "term": "3 айдан",
+     "termMonths": 3,
      "currencies": [
       "KZT"
      ],
@@ -273,67 +280,66 @@
    ],
    "loans": [
     {
-     "type": "Кепілсіз қолма-қол несие",
+     "typeKey": "cash",
      "brand": null,
      "rateFrom": null,
      "gesvFrom": 46,
-     "maxAmount": "4 300 000 ₸ дейін",
-     "maxTerm": "60 айға дейін",
+     "maxAmount": 4300000,
+     "maxTermMonths": 60,
      "special": null,
      "url": "https://kaspi.kz/cashkredit"
     },
     {
-     "type": "Көлік кепілімен несие",
+     "typeKey": "autoSecured",
      "brand": null,
      "rateFrom": null,
      "gesvFrom": 35,
-     "maxAmount": "8 000 000 ₸ дейін",
-     "maxTerm": "60 айға дейін",
+     "maxAmount": 8000000,
+     "maxTermMonths": 60,
      "special": null,
      "url": "https://guide.kaspi.kz/client/ru/cash_credit/conditions/car_secured/q19403"
     },
     {
-     "type": "Автонесие",
+     "typeKey": "auto",
      "brand": "Kolesa.kz",
      "rateFrom": null,
      "gesvFrom": 35,
      "maxAmount": null,
-     "maxTerm": "60 айға дейін",
+     "maxTermMonths": 60,
      "special": null,
      "url": "https://kaspi.kz/carcredit"
     },
     {
-     "type": "Сатып алуға несие",
+     "typeKey": "purchase",
      "brand": null,
      "rateFrom": null,
      "gesvFrom": 46,
-     "maxAmount": "2 000 000 ₸ дейін",
-     "maxTerm": "24 айға дейін",
+     "maxAmount": 2000000,
+     "maxTermMonths": 24,
      "special": null,
      "url": "https://kaspi.kz/purchase"
     },
     {
-     "type": "Бөліп төлеу",
+     "typeKey": "installment",
      "brand": null,
      "rateFrom": 0,
      "gesvFrom": null,
-     "maxAmount": "2 000 000 ₸ дейін",
-     "maxTerm": "24 айға дейін",
-     "special": "0% бөліп төлеу",
+     "maxAmount": 2000000,
+     "maxTermMonths": 24,
+     "special": "installment",
      "url": "https://kaspi.kz/installment"
     },
     {
-     "type": "Бөліп төлеу",
+     "typeKey": "installment",
      "brand": "Kaspi Red",
      "rateFrom": 0,
      "gesvFrom": null,
-     "maxAmount": "500 000 ₸ дейін",
-     "maxTerm": "4 айға дейін",
-     "special": "0% бөліп төлеу",
+     "maxAmount": 500000,
+     "maxTermMonths": 4,
+     "special": "installment",
      "url": "https://kaspi.kz/kaspired"
     }
-   ],
-   "note": null
+   ]
   },
   {
    "id": "bcc",
@@ -347,9 +353,10 @@
    "deposits": [
     {
      "name": "«Моя цель»",
+     "nameKk": null,
      "rate": 17.4,
      "gesv": 18.86,
-     "term": "3 айдан",
+     "termMonths": 3,
      "currencies": [
       "KZT"
      ],
@@ -357,9 +364,10 @@
     },
     {
      "name": "«Рахмет»",
+     "nameKk": null,
      "rate": 16.7,
      "gesv": 18.04,
-     "term": "3 айдан",
+     "termMonths": 3,
      "currencies": [
       "KZT",
       "USD"
@@ -368,9 +376,10 @@
     },
     {
      "name": "Birge+",
+     "nameKk": null,
      "rate": 15.5,
      "gesv": 16.65,
-     "term": "3 айдан",
+     "termMonths": 3,
      "currencies": [
       "KZT"
      ],
@@ -378,9 +387,10 @@
     },
     {
      "name": "«Чемпион»",
+     "nameKk": null,
      "rate": 14.2,
      "gesv": 15.16,
-     "term": "6 айдан",
+     "termMonths": 6,
      "currencies": [
       "KZT",
       "USD",
@@ -392,57 +402,56 @@
    ],
    "loans": [
     {
-     "type": "Кепілсіз қолма-қол несие",
+     "typeKey": "cash",
      "brand": null,
      "rateFrom": 16,
      "gesvFrom": 36.35,
-     "maxAmount": "8 000 000 ₸ дейін",
-     "maxTerm": "5 жылға дейін",
+     "maxAmount": 8000000,
+     "maxTermMonths": 60,
      "special": null,
      "url": "https://www.bcc.kz/personal/loans/cash-credit/"
     },
     {
-     "type": "Қайта қаржыландыру",
+     "typeKey": "refi",
      "brand": null,
      "rateFrom": 16,
      "gesvFrom": 36.35,
-     "maxAmount": "8 000 000 ₸ дейін",
-     "maxTerm": "60 айға дейін",
+     "maxAmount": 8000000,
+     "maxTermMonths": 60,
      "special": null,
      "url": "https://www.bcc.kz/personal/loans/refinancing/"
     },
     {
-     "type": "Автонесие",
+     "typeKey": "auto",
      "brand": null,
      "rateFrom": 22.6,
      "gesvFrom": 26.2,
-     "maxAmount": "45 000 000 ₸ дейін",
-     "maxTerm": "7 жылға дейін",
+     "maxAmount": 45000000,
+     "maxTermMonths": 84,
      "special": null,
      "url": "https://www.bcc.kz/personal/loans/auto-credit-for-new-car/"
     },
     {
-     "type": "Ипотека",
+     "typeKey": "mortgage",
      "brand": "#Ипотека",
      "rateFrom": 20.55,
      "gesvFrom": 23.6,
-     "maxAmount": "100 000 000 ₸ дейін",
-     "maxTerm": "180 айға дейін",
+     "maxAmount": 100000000,
+     "maxTermMonths": 180,
      "special": null,
      "url": "https://www.bcc.kz/personal/ipoteka/"
     },
     {
-     "type": "Кепілді несие",
+     "typeKey": "secured",
      "brand": null,
      "rateFrom": 24,
      "gesvFrom": 27.1,
-     "maxAmount": "150 000 000 ₸ дейін",
-     "maxTerm": "120 айға дейін",
+     "maxAmount": 150000000,
+     "maxTermMonths": 120,
      "special": null,
      "url": "https://www.bcc.kz/personal/loans/mortgage-loan/"
     }
-   ],
-   "note": null
+   ]
   },
   {
    "id": "alatau",
@@ -456,9 +465,10 @@
    "deposits": [
     {
      "name": "Sandyq",
+     "nameKk": null,
      "rate": 16.5,
      "gesv": 17.81,
-     "term": "6 айдан",
+     "termMonths": 6,
      "currencies": [
       "KZT"
      ],
@@ -466,9 +476,10 @@
     },
     {
      "name": "Jinaq+",
+     "nameKk": null,
      "rate": 15.5,
      "gesv": 16.65,
-     "term": "6 айдан",
+     "termMonths": 6,
      "currencies": [
       "KZT",
       "USD"
@@ -477,9 +488,10 @@
     },
     {
      "name": "Baytaq депозит",
+     "nameKk": null,
      "rate": 15,
      "gesv": 16.08,
-     "term": "3 айдан",
+     "termMonths": 3,
      "currencies": [
       "KZT",
       "USD",
@@ -489,10 +501,11 @@
      "url": "https://alataucitybank.kz/ru/deposit/baytaq-deposit"
     },
     {
-     "name": "Ортақ бюджет",
+     "name": "Общий бюджет",
+     "nameKk": "Ортақ бюджет",
      "rate": 14,
      "gesv": 14.93,
-     "term": "12 айдан",
+     "termMonths": 12,
      "currencies": [
       "KZT"
      ],
@@ -501,37 +514,36 @@
    ],
    "loans": [
     {
-     "type": "Кепілсіз қолма-қол несие",
+     "typeKey": "cash",
      "brand": null,
      "rateFrom": 28,
      "gesvFrom": 31.4,
-     "maxAmount": "8 000 000 ₸ дейін",
-     "maxTerm": "5 жылға дейін",
+     "maxAmount": 8000000,
+     "maxTermMonths": 60,
      "special": null,
      "url": "https://alataucitybank.kz/ru/credit/express"
     },
     {
-     "type": "Қайта қаржыландыру",
+     "typeKey": "refi",
      "brand": null,
      "rateFrom": 28,
      "gesvFrom": 31.4,
-     "maxAmount": "8 000 000 ₸ дейін",
-     "maxTerm": "5 жылға дейін",
+     "maxAmount": 8000000,
+     "maxTermMonths": 60,
      "special": null,
      "url": "https://alataucitybank.kz/ru/credit/refinance"
     },
     {
-     "type": "Жалақыға дейінгі несие",
+     "typeKey": "payday",
      "brand": null,
      "rateFrom": 37,
      "gesvFrom": 35,
-     "maxAmount": "550 000 ₸ дейін",
-     "maxTerm": "12 айға дейін",
+     "maxAmount": 550000,
+     "maxTermMonths": 12,
      "special": null,
      "url": "https://alataucitybank.kz/ru/credit/salary"
     }
-   ],
-   "note": null
+   ]
   },
   {
    "id": "forte",
@@ -544,30 +556,33 @@
    "ratesUrl": "https://bank.forte.kz/ru/forex",
    "deposits": [
     {
-     "name": "Толықтырусыз жинақ салымы",
+     "name": "Сберегательный вклад без права пополнения",
+     "nameKk": "Толықтырусыз жинақ салымы",
      "rate": 17.6,
      "gesv": 19.1,
-     "term": "3 айдан",
+     "termMonths": 3,
      "currencies": [
       "KZT"
      ],
      "url": "https://bank.forte.kz/ru/sber_noadd"
     },
     {
-     "name": "Ақша алусыз жинақ депозиті",
+     "name": "Сберегательный депозит без снятия",
+     "nameKk": "Ақша алусыз жинақ депозиті",
      "rate": 17.52,
      "gesv": 19,
-     "term": "3 айдан",
+     "termMonths": 3,
      "currencies": [
       "KZT"
      ],
      "url": "https://bank.forte.kz/ru/sberegatelnyi"
     },
     {
-     "name": "Ақша алу мүмкіндігі бар депозит",
+     "name": "Депозит со снятием",
+     "nameKk": "Ақша алу мүмкіндігі бар депозит",
      "rate": 14.6,
      "gesv": 15.72,
-     "term": "13 айдан",
+     "termMonths": 13,
      "currencies": [
       "KZT",
       "USD",
@@ -578,67 +593,66 @@
    ],
    "loans": [
     {
-     "type": "Кепілсіз қолма-қол несие",
+     "typeKey": "cash",
      "brand": null,
      "rateFrom": 28,
      "gesvFrom": 32.4,
-     "maxAmount": "9 500 000 ₸ дейін",
-     "maxTerm": "60 айға дейін",
+     "maxAmount": 9500000,
+     "maxTermMonths": 60,
      "special": null,
      "url": "https://bank.forte.kz/ru/express"
     },
     {
-     "type": "Қайта қаржыландыру",
+     "typeKey": "refi",
      "brand": null,
      "rateFrom": 28,
      "gesvFrom": 32.4,
-     "maxAmount": "9 500 000 ₸ дейін",
-     "maxTerm": "60 айға дейін",
+     "maxAmount": 9500000,
+     "maxTermMonths": 60,
      "special": null,
      "url": "https://bank.forte.kz/ru/refenansirovanie"
     },
     {
-     "type": "Автонесие",
+     "typeKey": "auto",
      "brand": null,
      "rateFrom": 0.1,
      "gesvFrom": 0.1,
-     "maxAmount": "50 000 000 ₸ дейін",
-     "maxTerm": "7 жылға дейін",
-     "special": "Серіктес/субсидияланған ұсыныс",
+     "maxAmount": 50000000,
+     "maxTermMonths": 84,
+     "special": "partner",
      "url": "https://bank.forte.kz/ru/auto-loan"
     },
     {
-     "type": "Ипотека",
+     "typeKey": "mortgage",
      "brand": "Forte Ипотека",
      "rateFrom": 1,
      "gesvFrom": 1.25,
-     "maxAmount": "100 000 000 ₸ дейін",
-     "maxTerm": "180 айға дейін",
-     "special": "Серіктес/субсидияланған ұсыныс",
+     "maxAmount": 100000000,
+     "maxTermMonths": 180,
+     "special": "partner",
      "url": "https://bank.forte.kz/ru/ipoteka_forte"
     },
     {
-     "type": "Ипотека",
+     "typeKey": "mortgage",
      "brand": null,
      "rateFrom": 9,
      "gesvFrom": 9.53,
-     "maxAmount": "100 000 000 ₸ дейін",
-     "maxTerm": "180 айға дейін",
+     "maxAmount": 100000000,
+     "maxTermMonths": 180,
      "special": null,
      "url": "https://bank.forte.kz/ru/ipoteka_deposit"
     },
     {
-     "type": "Кепілді несие",
+     "typeKey": "secured",
      "brand": null,
      "rateFrom": 23,
      "gesvFrom": 25.54,
-     "maxAmount": "200 000 000 ₸ дейін",
-     "maxTerm": "120 айға дейін",
+     "maxAmount": 200000000,
+     "maxTermMonths": 120,
      "special": null,
      "url": "https://bank.forte.kz/ru/credits"
     }
-   ],
-   "note": null
+   ]
   },
   {
    "id": "eurasian",
@@ -651,10 +665,11 @@
    "ratesUrl": "https://eubank.kz/ru/exchange-rates",
    "deposits": [
     {
-     "name": "TURBO Deposit Жинақтаушы",
+     "name": "TURBO Deposit Накопительный",
+     "nameKk": "TURBO Deposit Жинақтаушы",
      "rate": 17.64,
      "gesv": 19.22,
-     "term": "3 айдан",
+     "termMonths": 3,
      "currencies": [
       "KZT"
      ],
@@ -662,9 +677,10 @@
     },
     {
      "name": "Eurasian Flex",
+     "nameKk": null,
      "rate": 14.35,
      "gesv": 15.43,
-     "term": "6 айдан",
+     "termMonths": 6,
      "currencies": [
       "KZT"
      ],
@@ -672,9 +688,10 @@
     },
     {
      "name": "Turbo Deposit",
+     "nameKk": null,
      "rate": 13.98,
      "gesv": 15,
-     "term": "6 айдан",
+     "termMonths": 6,
      "currencies": [
       "KZT",
       "USD",
@@ -686,47 +703,46 @@
    ],
    "loans": [
     {
-     "type": "Кепілсіз қолма-қол несие",
+     "typeKey": "cash",
      "brand": null,
      "rateFrom": 36,
      "gesvFrom": 42.42,
-     "maxAmount": "7 000 000 ₸ дейін",
-     "maxTerm": "60 айға дейін",
+     "maxAmount": 7000000,
+     "maxTermMonths": 60,
      "special": null,
      "url": "https://eubank.kz/ru/unsecured_cash_loan"
     },
     {
-     "type": "Тұрақты клиенттерге несие",
+     "typeKey": "loyal",
      "brand": null,
      "rateFrom": 33,
      "gesvFrom": 38.28,
-     "maxAmount": "7 000 000 ₸ дейін",
-     "maxTerm": "60 айға дейін",
+     "maxAmount": 7000000,
+     "maxTermMonths": 60,
      "special": null,
      "url": "https://eubank.kz/ru/loan-for-loyal-customers"
     },
     {
-     "type": "Автонесие",
+     "typeKey": "auto",
      "brand": null,
      "rateFrom": 0.12,
      "gesvFrom": 0.12,
-     "maxAmount": "30 000 000 ₸ дейін",
-     "maxTerm": "84 айға дейін",
-     "special": "Серіктес/субсидияланған ұсыныс",
+     "maxAmount": 30000000,
+     "maxTermMonths": 84,
+     "special": "partner",
      "url": "https://eubank.kz/ru/loan-for-new-car"
     },
     {
-     "type": "Ипотека",
+     "typeKey": "mortgage",
      "brand": "«7-20-25»",
      "rateFrom": 7,
      "gesvFrom": 7.22,
-     "maxAmount": "24 000 000 ₸ дейін",
-     "maxTerm": "25 жылға дейін",
-     "special": "Мемлекеттік бағдарлама",
+     "maxAmount": 24000000,
+     "maxTermMonths": 300,
+     "special": "gov",
      "url": "https://eubank.kz/ru/mortgage-7-20-25"
     }
-   ],
-   "note": null
+   ]
   }
  ]
 }

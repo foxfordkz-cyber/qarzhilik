@@ -44,29 +44,27 @@
   // ---------- Қаржы әлемі карточкаларындағы көрсеткіштер (banks.json бойынша) ----------
   function fillMarketStats({ banks = [] }) {
     const set = (k, v) => { const el = document.querySelector(`[data-stat="${k}"]`); if (el && v) el.textContent = v; };
-    const parseMoney = (s) => { const m = String(s || "").match(/(\d[\d\s]*)(\s*млн)?/); return m ? Number(m[1].replace(/\s/g, "")) * (m[2] ? 1e6 : 1) : 0; };
-    const months = (s) => { const m = String(s || "").match(/(\d+)\s*(ай|жыл)/); return m ? +m[1] * (m[2] === "жыл" ? 12 : 1) : 0; };
-    const fmtTerm = (mo) => (mo % 12 === 0 ? `${mo / 12} жыл` : `${mo} ай`);
+    const term = (mo) => (mo % 12 === 0 && mo >= 12 ? T(`${mo / 12} жыл`, `${mo / 12} ${plural(mo / 12, "год", "года", "лет")}`) : T(`${mo} ай`, `${mo} мес.`));
 
     const deps = banks.flatMap((b) => (b.deposits || []).map((d) => ({ ...d, bank: b.name })));
     const top = deps.filter((d) => d.rate != null).sort((x, y) => y.rate - x.rate)[0];
     if (top) {
       set("dep-max", pct(top.rate));
       const note = document.getElementById("dep-note");
-      if (note) note.textContent = `${top.bank} · ${top.name}`;
+      if (note) note.textContent = `${top.bank} · ${depName(top)}`;
     }
-    const minTerm = deps.map((d) => months(d.term)).filter(Boolean).sort((x, y) => x - y)[0];
-    if (minTerm) set("dep-term", fmtTerm(minTerm));
+    const minTerm = deps.map((d) => d.termMonths).filter((m) => m > 0).sort((x, y) => x - y)[0];
+    if (minTerm) set("dep-term", term(minTerm));
     const cur = ["KZT", "USD", "EUR", "RUB"].filter((c) => deps.some((d) => (d.currencies || []).includes(c)));
     if (cur.length) set("dep-cur", cur.join(", "));
 
-    const cash = banks.flatMap((b) => (b.loans || []).filter((l) => l.type === "Кепілсіз қолма-қол несие"));
+    const cash = banks.flatMap((b) => (b.loans || []).filter((l) => l.typeKey === "cash"));
     const minRate = cash.map((l) => l.rateFrom).filter((r) => r != null).sort((x, y) => x - y)[0];
     if (minRate != null) set("loan-min", pct(minRate));
-    const maxAmount = Math.max(0, ...cash.map((l) => parseMoney(l.maxAmount)));
+    const maxAmount = Math.max(0, ...cash.map((l) => l.maxAmount || 0));
     if (maxAmount) set("loan-amount", `${maxAmount.toLocaleString("ru-RU")} ₸`);
-    const maxTerm = Math.max(0, ...cash.map((l) => months(l.maxTerm)));
-    if (maxTerm) set("loan-term", fmtTerm(maxTerm));
+    const maxTerm = Math.max(0, ...cash.map((l) => l.maxTermMonths || 0));
+    if (maxTerm) set("loan-term", term(maxTerm));
   }
 
   // ---------- Rates ----------
@@ -88,16 +86,100 @@
   }
 
   // ---------- Market modals ----------
+  const L = () => window.QZ.LANG;
+  const T = (kk, ru) => (L() === "ru" ? ru : kk);
+
+  const LOAN_LABEL = {
+    cash: ["Кепілсіз қолма-қол несие", "Беззалоговый кредит наличными"],
+    refi: ["Қайта қаржыландыру", "Рефинансирование"],
+    secured: ["Кепілді несие", "Залоговый кредит"],
+    autoSecured: ["Көлік кепілімен несие", "Кредит под залог авто"],
+    auto: ["Автонесие", "Автокредит"],
+    autoGov: ["Жеңілдетілген автонесие", "Льготный автокредит"],
+    mortgage: ["Ипотека", "Ипотека"],
+    mortgageGov: ["Мемлекеттік ипотека", "Государственная ипотека"],
+    purchase: ["Сатып алуға несие", "Кредит на покупки"],
+    installment: ["Бөліп төлеу", "Рассрочка"],
+    payday: ["Жалақыға дейінгі несие", "Деньги до зарплаты"],
+    loyal: ["Тұрақты клиенттерге несие", "Кредит для лояльных клиентов"],
+    other: ["Несие", "Кредит"],
+  };
+  const SPECIAL_LABEL = {
+    gov: ["Мемлекеттік бағдарлама", "Государственная программа"],
+    partner: ["Серіктес/субсидияланған ұсыныс", "Партнёрское/субсидированное предложение"],
+    installment: ["0% бөліп төлеу", "Рассрочка 0%"],
+  };
+  const loanLabel = (l) => {
+    const base = T(...(LOAN_LABEL[l.typeKey] || LOAN_LABEL.other));
+    return l.brand ? `${base} — ${l.brand}` : base;
+  };
+
   const BADGE_COLORS = ["#1a6b3c", "#0c4a8c", "#5b5bd6", "#d9481a", "#0e7490", "#9d174d", "#4d7c0f", "#7c3aed", "#b45309", "#334155"];
   const pct = (n) => (n == null || n === "" ? null : `${Number(n).toLocaleString("ru-RU", { maximumFractionDigits: 2 })}%`);
+  const upTo = (n) => (n == null ? null : T(`${pct(n)}-ға дейін`, `до ${pct(n)}`));
+  const from = (n) => (n == null ? null : T(`${pct(n)}-дан`, `от ${pct(n)}`));
+  const plural = (n, one, few, many) => {
+    const a = Math.abs(n) % 100, b = a % 10;
+    return a > 10 && a < 20 ? many : b > 1 && b < 5 ? few : b === 1 ? one : many;
+  };
+  // Мерзім: айлар саны → мәтін («6 айдан» / «от 6 мес.», «5 жылға дейін» / «до 5 лет»)
+  const fmtTerm = (months, mode) => {
+    if (months == null) return null;
+    if (months === 0) return T("мерзімсіз", "бессрочно");
+    const years = months % 12 === 0 && months >= 12 ? months / 12 : null;
+    if (L() === "ru") {
+      // «от / до» ілік септігін талап етеді: до 1 года, до 3 лет
+      const v = years ? `${years} ${years % 10 === 1 && years % 100 !== 11 ? "года" : "лет"}` : `${months} мес.`;
+      return mode === "from" ? `от ${v}` : `до ${v}`;
+    }
+    const v = years ? `${years} жыл` : `${months} ай`;
+    return mode === "from" ? `${v}дан` : `${v}${years ? "ға" : "ға"} дейін`;
+  };
+  const fmtAmount = (n) => {
+    if (n == null) return null;
+    const v = n >= 1e6 && n % 1e6 === 0 ? `${n / 1e6} ${T("млн", "млн")} ₸` : `${n.toLocaleString("ru-RU")} ₸`;
+    return T(`${v} дейін`, `до ${v}`);
+  };
+  const fmtDate = (iso) => {
+    if (!iso) return null;
+    const d = new Date(iso);
+    return isNaN(d) ? String(iso) : d.toLocaleDateString("ru-RU", { day: "2-digit", month: "2-digit", year: "numeric" });
+  };
+
   const initials = (name) => name.replace(/[«»"]/g, "").split(/\s+/).filter(Boolean).slice(0, 2).map((w) => w[0]).join("").toUpperCase();
   const badge = (b, i) => `<span class="bank-badge" style="background:${b.color || BADGE_COLORS[i % BADGE_COLORS.length]}">${esc(b.short || initials(b.name))}</span>`;
   const ext = (url, label, cls = "btn btn-green btn-sm", style = "") =>
     url ? `<a class="${cls}" ${style ? `style="${style}"` : ""} href="${esc(url)}" target="_blank" rel="noopener">${label} ${icon("external")}</a>` : "";
+  const prodName = (name, url) =>
+    url ? `<a class="pn" href="${esc(url)}" target="_blank" rel="noopener">${esc(name)} ${icon("external")}</a>` : `<b>${esc(name)}</b>`;
 
   let banksPromise, otbasyPromise, bankFxPromise;
-  const loadBanks = () => (banksPromise ||= fetch("/data/banks.json").then((r) => (r.ok ? r.json() : { banks: [] })).catch(() => ({ banks: [] })));
   const fetchJson = (url) => fetch(url).then((r) => (r.ok ? r.json() : Promise.reject(new Error(url))));
+
+  // Статикалық сурет (қолмен тексерілген) + автоматты жаңартылған деректерді біріктіру
+  function mergeBanks(base, live) {
+    return base.banks.map((b) => {
+      const auto = live?.banks?.[b.id];
+      const depAuto = !!auto?.deposits?.length;
+      const loanAuto = !!auto?.loans?.length;
+      return {
+        ...b,
+        deposits: depAuto ? auto.deposits : b.deposits,
+        loans: loanAuto ? auto.loans : b.loans,
+        // Әр бөлім өз күнімен: автоматты алынғаны — жаңарту күні, қалғаны — қолмен тексерілген күн
+        depositsAuto: depAuto,
+        depositsDate: depAuto ? auto.updatedAt : base.snapshot,
+        loansAuto: loanAuto,
+        loansDate: loanAuto ? auto.updatedAt : base.snapshot,
+      };
+    });
+  }
+  const loadBanks = () =>
+    (banksPromise ||= Promise.all([
+      fetchJson("/data/banks.json").catch(() => ({ banks: [], snapshot: null })),
+      api("/api/bank-products").catch(() => null),
+    ]).then(([base, live]) => ({ banks: mergeBanks(base, live), snapshot: base.snapshot, live })));
+
   const loadOtbasy = () =>
     (otbasyPromise ||= (window.QZ.LANG === "ru" ? fetchJson("/data/otbasy.ru.json") : Promise.reject())
       .catch(() => fetchJson("/data/otbasy.json"))
@@ -107,10 +189,27 @@
   function head(color, ic, title, sub) {
     return `<div class="modal-head" style="background:${color}">${icon(ic)}<div><h3>${title}</h3><p>${sub}</p></div></div>`;
   }
-  const fine = `<p class="fine">Мөлшерлемелер банктердің ресми сайттарындағы ақпарат бойынша берілген және өзгеруі мүмкін. Шешім қабылдамас бұрын нақты шарттарды банктен тексеріңіз.</p>`;
+  const fine = `<p class="fine">${T(
+    "Мөлшерлемелер банктердің ресми сайттарынан алынады және өзгеруі мүмкін. Шешім қабылдамас бұрын нақты шарттарды банктен тексеріңіз.",
+    "Ставки берутся с официальных сайтов банков и могут меняться. Перед принятием решения уточняйте условия в банке."
+  )}</p>`;
   const intro = (text, updated) =>
     `<div class="portfolio-intro"><span>${text}</span>${updated ? `<span class="upd">${icon("clock")} ${esc(updated)}</span>` : ""}</div>`;
-  const val = (v, fmtNum) => (v == null || v === "" ? null : typeof v === "number" ? fmtNum(v) : esc(v));
+  // Әр банк картасындағы күн: автоматты жаңартылған ба, әлде қолмен тексерілген бе
+  const bankDate = (b, section) => {
+    const auto = section === "deposits" ? b.depositsAuto : b.loansAuto;
+    const date = section === "deposits" ? b.depositsDate : b.loansDate;
+    return date ? `<small>${T(auto ? "Жаңартылды" : "Тексерілді", auto ? "Обновлено" : "Проверено")}: ${fmtDate(date)}</small>` : "";
+  };
+  const freshness = (banks, section) => {
+    const dates = banks.map((b) => (section === "deposits" ? b.depositsDate : b.loansDate)).filter(Boolean).sort();
+    const last = dates[dates.length - 1];
+    const autoCount = banks.filter((b) => (section === "deposits" ? b.depositsAuto : b.loansAuto)).length;
+    return T(
+      `${autoCount} банк автоматты жаңартылады · соңғы жаңарту ${fmtDate(last)}`,
+      `${autoCount} ${plural(autoCount, "банк обновляется", "банка обновляются", "банков обновляются")} автоматически · последнее обновление ${fmtDate(last)}`
+    );
+  };
 
   function annuity(principal, yearRate, months) {
     const r = yearRate / 100 / 12;
@@ -122,14 +221,14 @@
     return `
       <div class="calc" data-calc="loan">
         <div class="calc-grid">
-          <label>Сома, ₸<input type="number" name="amount" min="10000" step="10000" value="${defaults.amount}"></label>
-          <label>Жылдық мөлшерлеме, %<input type="number" name="rate" min="0" max="60" step="0.1" value="${defaults.rate}"></label>
-          <label>Мерзім, ай<input type="number" name="months" min="1" max="360" step="1" value="${defaults.months}"></label>
+          <label>${T("Сома, ₸", "Сумма, ₸")}<input type="number" name="amount" min="10000" step="10000" value="${defaults.amount}"></label>
+          <label>${T("Жылдық мөлшерлеме, %", "Годовая ставка, %")}<input type="number" name="rate" min="0" max="60" step="0.1" value="${defaults.rate}"></label>
+          <label>${T("Мерзім, ай", "Срок, мес.")}<input type="number" name="months" min="1" max="360" step="1" value="${defaults.months}"></label>
         </div>
         <div class="calc-out">
-          <div><span>Ай сайынғы төлем</span><b data-out="pay">—</b></div>
-          <div><span>Барлық төлем</span><b data-out="total">—</b></div>
-          <div><span>Артық төлем</span><b data-out="over">—</b></div>
+          <div><span>${T("Ай сайынғы төлем", "Ежемесячный платёж")}</span><b data-out="pay">—</b></div>
+          <div><span>${T("Барлық төлем", "Общая сумма выплат")}</span><b data-out="total">—</b></div>
+          <div><span>${T("Артық төлем", "Переплата")}</span><b data-out="over">—</b></div>
         </div>
       </div>`;
   }
@@ -152,14 +251,14 @@
     return `
       <div class="calc" data-calc="deposit">
         <div class="calc-grid">
-          <label>Сома, ₸<input type="number" name="amount" min="1000" step="10000" value="500000"></label>
-          <label>Жылдық мөлшерлеме, %<input type="number" name="rate" min="0" max="40" step="0.01" value="15"></label>
-          <label>Мерзім, ай<input type="number" name="months" min="1" max="120" value="12"></label>
+          <label>${T("Сома, ₸", "Сумма, ₸")}<input type="number" name="amount" min="1000" step="10000" value="500000"></label>
+          <label>${T("Жылдық мөлшерлеме, %", "Годовая ставка, %")}<input type="number" name="rate" min="0" max="40" step="0.01" value="15"></label>
+          <label>${T("Мерзім, ай", "Срок, мес.")}<input type="number" name="months" min="1" max="120" value="12"></label>
         </div>
         <div class="calc-out">
-          <div><span>Мерзім соңында</span><b data-out="end">—</b></div>
-          <div><span>Табыс</span><b data-out="profit">—</b></div>
-          <div><span>Тиімді мөлшерлеме</span><b data-out="eff">—</b></div>
+          <div><span>${T("Мерзім соңында", "В конце срока")}</span><b data-out="end">—</b></div>
+          <div><span>${T("Табыс", "Доход")}</span><b data-out="profit">—</b></div>
+          <div><span>${T("Тиімді мөлшерлеме", "Эффективная ставка")}</span><b data-out="eff">—</b></div>
         </div>
       </div>`;
   }
@@ -178,43 +277,50 @@
     run();
   }
 
-  const prodName = (name, url) =>
-    url ? `<a class="pn" href="${esc(url)}" target="_blank" rel="noopener">${esc(name)} ${icon("external")}</a>` : `<b>${esc(name)}</b>`;
   const bestOf = (items, key) => items.reduce((m, x) => (typeof x[key] === "number" && (m == null || x[key] > m) ? x[key] : m), null);
   const lowestOf = (items, key) => items.reduce((m, x) => (typeof x[key] === "number" && (m == null || x[key] < m) ? x[key] : m), null);
+  const depName = (d) => (L() === "kk" && d.nameKk ? d.nameKk : d.name);
 
   const MARKET = {
     async deposit() {
-      const { banks = [], updated } = await loadBanks();
+      const { banks } = await loadBanks();
       openModal(
-        head("linear-gradient(135deg,#4fbf52,#1f8a36)", "piggy", "Депозиттер", "Банктердің депозиттік ұсыныстары") +
+        head("linear-gradient(135deg,#4fbf52,#1f8a36)", "piggy", T("Депозиттер", "Депозиты"), T("Банктердің депозиттік ұсыныстары", "Депозитные предложения банков")) +
         `<div class="modal-body">
-          ${intro(`${banks.length} банктің депозиттері. Банкті таңдап, оның ресми сайтындағы депозиттер бетіне өтіңіз.`, updated)}
+          ${intro(
+            T(`${banks.length} банктің депозиттері. Банкті таңдап, оның ресми сайтындағы депозиттер бетіне өтіңіз.`,
+              `Депозиты ${banks.length} банков. Выберите банк и перейдите на страницу депозитов на его официальном сайте.`),
+            freshness(banks, "deposits")
+          )}
           <div class="bank-grid">
             ${banks.map((b, i) => {
               const deps = b.deposits || [];
               const best = bestOf(deps, "rate");
               return `
               <article class="bank-card">
-                <div class="bank-top">${badge(b, i)}<div><h5>${esc(b.name)}</h5><small>${deps.length ? `${deps.length} депозит` : "Депозиттер"}</small></div>${best != null ? `<span class="best">${pct(best)}-ға дейін</span>` : ""}</div>
+                <div class="bank-top">${badge(b, i)}<div><h5>${esc(b.name)}</h5>${bankDate(b, "deposits")}</div>${best != null ? `<span class="best">${upTo(best)}</span>` : ""}</div>
                 ${deps.length ? `<ul class="prod-list">${deps.map((d) => `
-                  <li>${prodName(d.name, d.url)}<span class="r">${d.rate != null ? `${pct(d.rate)}-ға дейін` : d.gesv != null ? `ЖТСМ ${pct(d.gesv)}` : "—"}</span>
-                  <span class="m">${[d.rate != null && d.gesv != null ? `ЖТСМ ${pct(d.gesv)}-ға дейін` : "", d.term ? esc(d.term) : "", (d.currencies || []).join(", ")].filter(Boolean).join(" · ")}</span></li>`).join("")}</ul>`
-                  : `<p class="bank-empty">${esc(b.note || "Өнімдер мен мөлшерлемелер банктің сайтында.")}</p>`}
-                ${ext(b.depositsUrl || b.site, "Депозиттерді көру")}
+                  <li>${prodName(depName(d), d.url)}<span class="r">${d.rate != null ? upTo(d.rate) : d.gesv != null ? `${T("ЖТСМ", "ГЭСВ")} ${pct(d.gesv)}` : "—"}</span>
+                  <span class="m">${[
+                    d.rate != null && d.gesv != null ? `${T("ЖТСМ", "ГЭСВ")} ${upTo(d.gesv)}` : "",
+                    fmtTerm(d.termMonths, "from"),
+                    (d.currencies || []).join(", "),
+                  ].filter(Boolean).join(" · ")}</span></li>`).join("")}</ul>`
+                  : `<p class="bank-empty">${T("Өнімдер мен мөлшерлемелер банктің сайтында.", "Продукты и ставки — на сайте банка.")}</p>`}
+                ${ext(b.depositsUrl || b.site, T("Депозиттерді көру", "Смотреть депозиты"))}
               </article>`;
             }).join("")}
           </div>
-          <h4 style="margin-top:26px">Депозит калькуляторы (ай сайын капиталдандыру)</h4>
+          <h4 style="margin-top:26px">${T("Депозит калькуляторы (ай сайын капиталдандыру)", "Депозитный калькулятор (ежемесячная капитализация)")}</h4>
           ${depositCalc()}
-          <h4>Депозит таңдағанда нені тексеру керек?</h4>
+          <h4>${T("Депозит таңдағанда нені тексеру керек?", "На что обратить внимание при выборе депозита?")}</h4>
           <ul>
-            <li>Жылдық тиімді сыйақы мөлшерлемесі (ЖТСМ) — нақты табысты көрсетеді.</li>
-            <li>Мерзімінен бұрын алу және толықтыру шарттары.</li>
-            <li>Салымның Қазақстанның депозиттерге кепілдік беру қорымен кепілдендірілуі.</li>
+            <li>${T("Жылдық тиімді сыйақы мөлшерлемесі (ЖТСМ) — нақты табысты көрсетеді.", "Годовая эффективная ставка вознаграждения (ГЭСВ) показывает реальный доход.")}</li>
+            <li>${T("Мерзімінен бұрын алу және толықтыру шарттары.", "Условия досрочного изъятия и пополнения.")}</li>
+            <li>${T("Салымның Қазақстанның депозиттерге кепілдік беру қорымен кепілдендірілуі.", "Гарантирован ли вклад Казахстанским фондом гарантирования депозитов.")}</li>
           </ul>
           <div class="links-row">
-            <a class="btn btn-green btn-sm" href="/topic?c=life&t=zhinaq">Сабақ: Жинақ және депозит ${icon("arrow")}</a>
+            <a class="btn btn-green btn-sm" href="/topic?c=life&t=zhinaq">${T("Сабақ: Жинақ және депозит", "Урок: Сбережения и депозиты")} ${icon("arrow")}</a>
             ${ext("https://kdif.kz", "kdif.kz", "btn btn-outline btn-sm")}
           </div>
           ${fine}
@@ -225,37 +331,45 @@
     },
 
     async credit() {
-      const { banks = [], updated } = await loadBanks();
+      const { banks } = await loadBanks();
       openModal(
-        head("linear-gradient(135deg,#37a8d9,#135d99)", "certificate", "Несиелер", "Банктердің несие түрлері") +
+        head("linear-gradient(135deg,#37a8d9,#135d99)", "certificate", T("Несиелер", "Кредиты"), T("Банктердің несие түрлері", "Виды кредитов в банках")) +
         `<div class="modal-body">
-          ${intro(`${banks.length} банктің несие өнімдері. Банкті таңдап, ресми сайттағы несиелер бетіне өтіңіз.`, updated)}
+          ${intro(
+            T(`${banks.length} банктің несие өнімдері. Банкті таңдап, ресми сайттағы несиелер бетіне өтіңіз.`,
+              `Кредиты ${banks.length} банков. Выберите банк и перейдите на страницу кредитов на его официальном сайте.`),
+            freshness(banks, "loans")
+          )}
           <div class="bank-grid">
             ${banks.map((b, i) => {
               const loans = b.loans || [];
-              // Серіктес/мемлекеттік/бөліп төлеу ұсыныстары «ең төменгі» белгісіне кірмейді
               const low = lowestOf(loans.filter((l) => !l.special), "rateFrom");
               return `
               <article class="bank-card">
-                <div class="bank-top">${badge(b, i)}<div><h5>${esc(b.name)}</h5><small>${loans.length ? `${loans.length} несие түрі` : "Несиелер"}</small></div>${low != null ? `<span class="best blue">${pct(low)}-дан</span>` : ""}</div>
+                <div class="bank-top">${badge(b, i)}<div><h5>${esc(b.name)}</h5>${bankDate(b, "loans")}</div>${low != null ? `<span class="best blue">${from(low)}</span>` : ""}</div>
                 ${loans.length ? `<ul class="prod-list">${loans.map((l) => `
-                  <li>${prodName(l.brand ? `${l.type} — ${l.brand}` : l.type, l.url)}<span class="r" style="color:#135d99">${l.rateFrom != null ? `${pct(l.rateFrom)}-дан` : l.gesvFrom != null ? `ЖТСМ ${pct(l.gesvFrom)}` : "—"}</span>
-                  <span class="m">${[l.rateFrom != null && l.gesvFrom != null ? `ЖТСМ ${pct(l.gesvFrom)}-дан` : "", l.maxAmount ? esc(l.maxAmount) : "", l.maxTerm ? esc(l.maxTerm) : "", l.special ? `<em class="special">${esc(l.special)}</em>` : ""].filter(Boolean).join(" · ")}</span></li>`).join("")}</ul>`
-                  : `<p class="bank-empty">${esc(b.note || "Несие түрлері мен шарттары банктің сайтында.")}</p>`}
-                ${ext(b.loansUrl || b.site, "Несиелерді көру", "btn btn-green btn-sm", "background:#135d99")}
+                  <li>${prodName(loanLabel(l), l.url)}<span class="r" style="color:#135d99">${l.rateFrom != null ? from(l.rateFrom) : l.gesvFrom != null ? `${T("ЖТСМ", "ГЭСВ")} ${pct(l.gesvFrom)}` : "—"}</span>
+                  <span class="m">${[
+                    l.rateFrom != null && l.gesvFrom != null ? `${T("ЖТСМ", "ГЭСВ")} ${from(l.gesvFrom)}` : "",
+                    fmtAmount(l.maxAmount),
+                    fmtTerm(l.maxTermMonths, "to"),
+                    l.special ? `<em class="special">${T(...SPECIAL_LABEL[l.special])}</em>` : "",
+                  ].filter(Boolean).join(" · ")}</span></li>`).join("")}</ul>`
+                  : `<p class="bank-empty">${T("Несие түрлері мен шарттары банктің сайтында.", "Виды кредитов и условия — на сайте банка.")}</p>`}
+                ${ext(b.loansUrl || b.site, T("Несиелерді көру", "Смотреть кредиты"), "btn btn-green btn-sm", "background:#135d99")}
               </article>`;
             }).join("")}
           </div>
-          <h4 style="margin-top:26px">Несие калькуляторы (аннуитетті төлем)</h4>
+          <h4 style="margin-top:26px">${T("Несие калькуляторы (аннуитетті төлем)", "Кредитный калькулятор (аннуитетный платёж)")}</h4>
           ${loanCalc({ amount: 2000000, rate: 20, months: 36 })}
-          <h4>Несие алмас бұрын</h4>
+          <h4>${T("Несие алмас бұрын", "Перед тем как брать кредит")}</h4>
           <ul>
-            <li>Номиналды емес, жылдық тиімді сыйақы мөлшерлемесін (ЖТСМ) салыстырыңыз.</li>
-            <li>Ай сайынғы төлем табысыңыздың 30–40%-ынан аспағаны жөн.</li>
-            <li>Аннуитетті және сараланған төлем кестелерін салыстырыңыз.</li>
+            <li>${T("Номиналды емес, жылдық тиімді сыйақы мөлшерлемесін (ЖТСМ) салыстырыңыз.", "Сравнивайте не номинальную ставку, а ГЭСВ — годовую эффективную ставку вознаграждения.")}</li>
+            <li>${T("Ай сайынғы төлем табысыңыздың 30–40%-ынан аспағаны жөн.", "Ежемесячный платёж лучше держать в пределах 30–40% дохода.")}</li>
+            <li>${T("Аннуитетті және сараланған төлем кестелерін салыстырыңыз.", "Сравните аннуитетный и дифференцированный графики платежей.")}</li>
           </ul>
           <div class="links-row">
-            <a class="btn btn-green btn-sm" href="/topic?c=life&t=nesie">Сабақ: Несие және қарызды басқару ${icon("arrow")}</a>
+            <a class="btn btn-green btn-sm" href="/topic?c=life&t=nesie">${T("Сабақ: Несие және қарызды басқару", "Урок: Кредиты и управление долгом")} ${icon("arrow")}</a>
           </div>
           ${fine}
         </div>`,
@@ -265,48 +379,55 @@
     },
 
     async currency() {
-      const [{ banks = [] }, live] = await Promise.all([loadBanks(), loadBankFx()]);
+      const [{ banks }, live] = await Promise.all([loadBanks(), loadBankFx()]);
       const codes = ["USD", "EUR", "RUB"];
       const liveBy = (live && live.banks) || {};
       const cell = (r) => (r && (r.buy || r.sell) ? `${r.buy ? fmt(r.buy) : "—"} / ${r.sell ? fmt(r.sell) : "—"}` : "—");
       openModal(
-        head("linear-gradient(135deg,#8b87f0,#4a47c2)", "exchange", "Валюта бағамдары", "Банктердегі сатып алу / сату бағамы") +
+        head("linear-gradient(135deg,#8b87f0,#4a47c2)", "exchange", T("Валюта бағамдары", "Курсы валют"), T("Банктердегі сатып алу / сату бағамы", "Курсы покупки / продажи в банках")) +
         `<div class="modal-body">
-          ${intro("Әр банктің айырбастау бағамы (сатып алу / сату). Толық кесте — банктің ресми сайтында.", live?.updatedAt ? `Жаңартылды: ${live.updatedAt}` : ratesDate)}
+          ${intro(
+            T("Әр банктің айырбастау бағамы (сатып алу / сату). Толық кесте — банктің ресми сайтында.",
+              "Обменный курс каждого банка (покупка / продажа). Полная таблица — на официальном сайте банка."),
+            live?.updatedAt ? T(`Жаңартылды: ${live.updatedAt}`, `Обновлено: ${live.updatedAt}`) : ratesDate
+          )}
           <div class="fx-wrap">
             <table class="fx-table">
-              <thead><tr><th>Банк</th>${codes.map((c) => `<th>${c}<small style="display:block;font-weight:600;text-transform:none;letter-spacing:0">алу / сату</small></th>`).join("")}<th></th></tr></thead>
+              <thead><tr><th>${T("Банк", "Банк")}</th>${codes.map((c) => `<th>${c}<small style="display:block;font-weight:600;text-transform:none;letter-spacing:0">${T("алу / сату", "покупка / продажа")}</small></th>`).join("")}<th></th></tr></thead>
               <tbody>
-                <tr class="nbk"><td>ҚР Ұлттық Банкі <small>ресми бағам</small></td>${codes.map((c) => `<td>${rates[c] ? fmt(rates[c].rate) : "—"}</td>`).join("")}<td>${ext("https://nationalbank.kz", "Сайт", "ext")}</td></tr>
+                <tr class="nbk"><td>${T("ҚР Ұлттық Банкі", "Национальный Банк РК")} <small>${T("ресми бағам", "официальный курс")}</small></td>${codes.map((c) => `<td>${rates[c] ? fmt(rates[c].rate) : "—"}</td>`).join("")}<td>${ext("https://nationalbank.kz", T("Сайт", "Сайт"), "ext")}</td></tr>
                 ${banks.map((b, i) => {
                   const r = liveBy[b.id] || {};
-                  return `<tr><td><span class="bank-cell">${badge(b, i)}<span>${esc(b.name)}${r.note ? `<small>${esc(r.note)}</small>` : ""}</span></span></td>${codes.map((c) => `<td>${cell(r[c])}</td>`).join("")}<td>${ext(b.ratesUrl || b.site, "Бағамдар", "ext")}</td></tr>`;
+                  return `<tr><td><span class="bank-cell">${badge(b, i)}<span>${esc(b.name)}${r.note ? `<small>${esc(r.note)}</small>` : ""}</span></span></td>${codes.map((c) => `<td>${cell(r[c])}</td>`).join("")}<td>${ext(b.ratesUrl || b.site, T("Бағамдар", "Курсы"), "ext")}</td></tr>`;
                 }).join("")}
               </tbody>
             </table>
           </div>
-          <h4 style="margin-top:22px">Валюта айырбастау (ресми бағам бойынша)</h4>
+          <h4 style="margin-top:22px">${T("Валюта айырбастау (ресми бағам бойынша)", "Конвертер валют (по официальному курсу)")}</h4>
           <div class="calc" data-calc="fx">
             <div class="calc-grid">
-              <label>Сома<input type="number" name="amount" min="0" step="1" value="100"></label>
-              <label>Валютадан<select name="from">${["KZT", ...codes, "CNY"].map((c) => `<option ${c === "USD" ? "selected" : ""}>${c}</option>`).join("")}</select></label>
-              <label>Валютаға<select name="to">${["KZT", ...codes, "CNY"].map((c) => `<option ${c === "KZT" ? "selected" : ""}>${c}</option>`).join("")}</select></label>
+              <label>${T("Сома", "Сумма")}<input type="number" name="amount" min="0" step="1" value="100"></label>
+              <label>${T("Валютадан", "Из валюты")}<select name="from">${["KZT", ...codes, "CNY"].map((c) => `<option ${c === "USD" ? "selected" : ""}>${c}</option>`).join("")}</select></label>
+              <label>${T("Валютаға", "В валюту")}<select name="to">${["KZT", ...codes, "CNY"].map((c) => `<option ${c === "KZT" ? "selected" : ""}>${c}</option>`).join("")}</select></label>
             </div>
             <div class="calc-out" style="grid-template-columns:1fr">
-              <div><span>Нәтиже</span><b data-out="res">—</b></div>
+              <div><span>${T("Нәтиже", "Результат")}</span><b data-out="res">—</b></div>
             </div>
           </div>
-          <p class="fine">Банктердегі айырбастау бағамы ресми бағамнан өзгеше болады: банк валютаны арзанырақ сатып алып, қымбатырақ сатады (спред). Бағамдар күн ішінде өзгеруі мүмкін.</p>
+          <p class="fine">${T(
+            "Банктердегі айырбастау бағамы ресми бағамнан өзгеше болады: банк валютаны арзанырақ сатып алып, қымбатырақ сатады (спред). Бағамдар күн ішінде өзгеруі мүмкін.",
+            "Обменный курс в банках отличается от официального: банк покупает валюту дешевле, а продаёт дороже (спред). Курсы могут меняться в течение дня."
+          )}</p>
         </div>`,
         (modal) => {
           const c = modal.querySelector('[data-calc="fx"]');
           const toKzt = (code) => (code === "KZT" ? 1 : rates[code]?.rate || 0);
           const run = () => {
             const a = +c.querySelector("[name=amount]").value || 0;
-            const from = c.querySelector("[name=from]").value;
-            const to = c.querySelector("[name=to]").value;
-            const res = toKzt(to) ? (a * toKzt(from)) / toKzt(to) : 0;
-            c.querySelector('[data-out="res"]').textContent = `${fmt(res)} ${to}`;
+            const fromC = c.querySelector("[name=from]").value;
+            const toC = c.querySelector("[name=to]").value;
+            const res = toKzt(toC) ? (a * toKzt(fromC)) / toKzt(toC) : 0;
+            c.querySelector('[data-out="res"]').textContent = `${fmt(res)} ${toC}`;
           };
           c.addEventListener("input", run);
           c.addEventListener("change", run);
