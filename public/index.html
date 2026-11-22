@@ -3,56 +3,53 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>QARZHЫ — отбасы бюджетін жоспарлау</title>
-  <meta name="description" content="Отбасы бюджетінің айлық жоспарын құрыңыз. ЖИ шығындарды санатқа бөледі, жоспар жинақ мақсатына қанша ақша қалатынын есептейді.">
+  <title>QARZHЫ — Қаржыны түсін. Саналы шешім қабылда.</title>
+  <meta name="description" content="QARZHЫ порталында несие мен депозит шарттарын салыстырыңыз, төлем мен жинақты есептеңіз және ЖИ көмегімен қаржы сабағын таңдаңыз.">
   <meta name="theme-color" content="#0c3a25">
-  <meta property="og:title" content="QARZHЫ — отбасы бюджетін жоспарлау">
-  <meta property="og:description" content="Айлық кіріс, шығын және жинақ мақсаты. Шығындардың санатын ЖИ ұсынады.">
+  <meta property="og:title" content="QARZHЫ — қаржылық сауаттылық платформасы">
+  <meta property="og:description" content="Қаржыны түсін. Саналы шешім қабылда. Несие, депозит, валюта бағамдары және екі оқу бағыты.">
   <meta property="og:image" content="/img/og-logo.png">
   <link rel="icon" href="/favicon.png" type="image/png">
   <link rel="apple-touch-icon" href="/apple-touch-icon.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Unbounded:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="preload" as="image" href="/img/hero.jpg">
   <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/bank-calculators.css">
 </head>
 <body data-page="home">
   <header id="site-header"></header>
 
   <main>
     <!-- 1. Басты бет -->
-    <section class="hero family-home" id="home">
+    <section class="hero" id="home">
+      <div class="hero-bg" aria-hidden="true"></div>
       <div class="container hero-inner">
         <div class="hero-content">
-          <h1><span data-ru="Спланируйте">Отбасы бюджетін</span><br><span class="accent" data-ru="семейный бюджет">жоспарлаңыз</span></h1>
-          <p class="hero-lead" data-ru="Введите доход, расходы и цель семьи. ИИ распределит траты по категориям, а план покажет, сколько можно откладывать каждый месяц.">Отбасының кірісін, шығынын және жинақ мақсатын енгізіңіз. ЖИ шығындарды санаттарға бөледі, ал жоспар ай сайын қанша жинай алатыныңызды көрсетеді.</p>
+          <span class="eyebrow"><span class="dot" data-icon="sprout"></span><span data-ru="Финансовая грамотность">Қаржылық сауаттылық</span></span>
+          <h1>Қаржыны түсін.<br><span class="accent" data-ru="Принимай осознанные">Саналы шешім</span> қабылда.</h1>
+          <p class="hero-lead" data-ru="Сравни условия банков Казахстана, рассчитай платёж по кредиту или доход по депозиту. Изучи тему подробнее на уроке.">Қазақстан банктерінің шарттарын салыстыр, несие төлемін немесе депозит кірісін есепте. Тақырыпты сабақта тереңірек меңгер.</p>
           <div class="hero-cta">
-            <a class="btn btn-orange btn-lg" href="/family"><span data-ru="Рассчитать семейный бюджет">Отбасы бюджетін есептеу</span><span data-icon="arrow"></span></a>
-            <a class="btn btn-ghost btn-lg" href="/guide"><span data-ru="Подобрать урок с ИИ">ЖИ көмегімен сабақ таңдау</span></a>
+            <button class="btn btn-orange btn-lg" type="button" data-market="credit"><span data-icon="certificate"></span><span data-ru="Рассчитать кредит">Несиені есептеу</span></button>
+            <button class="btn btn-ghost btn-lg" type="button" data-market="deposit"><span data-icon="piggy"></span><span data-ru="Рассчитать депозит">Депозитті есептеу</span></button>
           </div>
+          <a class="hero-guide" href="/guide"><span data-ru="Подобрать урок с ИИ">ЖИ көмегімен сабақ таңдау</span><span data-icon="arrow"></span></a>
         </div>
-        <figure class="family-ledger">
-          <figcaption data-ru="Пример бюджета семьи на месяц">Бір отбасының айлық бюджеті</figcaption>
-          <p class="ledger-label" data-ru="Общий доход">Жалпы кіріс</p><p class="ledger-income">420 000 ₸</p>
-          <div class="ledger-bar" aria-hidden="true"><i></i><i></i><i></i></div>
-          <dl>
-            <div><dt data-ru="Запланированные расходы">Жоспарланған шығын</dt><dd>240 000 ₸</dd></div>
-            <div><dt data-ru="Взнос на цель">Мақсатқа жинақ</dt><dd>60 000 ₸</dd></div>
-            <div><dt data-ru="Останется на месяц">Ай соңындағы қалдық</dt><dd>120 000 ₸</dd></div>
-          </dl>
-          <a href="/family?example=1" data-ru="Открыть этот пример →">Осы мысалды ашу →</a>
-        </figure>
+      </div>
+      <div class="hero-stats">
+        <div class="container">
+          <ul>
+            <li><span class="ic" data-icon="target"></span><div><div class="num">2</div><div class="lbl">оқу бағыты</div></div></li>
+            <li><span class="ic" data-icon="books"></span><div><div class="num">18</div><div class="lbl">тақырып</div></div></li>
+            <li><span class="ic" data-icon="doc-check"></span><div><div class="num">72</div><div class="lbl">тест сұрағы</div></div></li>
+            <li><span class="ic" data-icon="play"></span><div><div class="num">MOOC</div><div class="lbl">бейнесабақтар</div></div></li>
+          </ul>
+        </div>
       </div>
     </section>
 
     <!-- 2. Қаржыны үйрену -->
-    <section class="section" style="padding-bottom:0">
-      <div class="container"><div class="video-block is-visible">
-        <div class="vb-ic"><span data-icon="books"></span></div>
-        <div><h2 style="font-size:clamp(24px,3vw,34px)">QARZHЫ Academy</h2><p data-ru="Собственный учебный кабинет: 15 уроков, практика и общий прогресс на сайте и в приложении. Идёт набор в пилотную группу.">Өз оқу кабинетіңіз: 15 сабақ, практика және сайт пен қолданбадағы ортақ прогресс. Пилоттық топқа қабылдау жүріп жатыр.</p></div>
-        <a class="btn btn-orange" href="/academy" data-ru="Посмотреть программу →">Бағдарламаны көру →</a>
-      </div></div>
-    </section>
     <section class="section" id="learn">
       <div class="container">
         <div class="section-head reveal">
@@ -89,6 +86,14 @@
               <a class="btn btn-white btn-lg" href="/course?c=pro">Кіру <span data-icon="arrow"></span></a>
             </div>
           </article>
+        </div>
+        <div class="video-block academy-link reveal">
+          <div class="vb-ic"><span data-icon="books"></span></div>
+          <div>
+            <h3>QARZHЫ Academy</h3>
+            <p data-ru="15 уроков с практикой. Продолжай с того же места на сайте или в приложении.">15 сабақ пен практикалық тапсырмалар. Оқуды сайтта немесе қолданбада тоқтаған жерден жалғастыр.</p>
+          </div>
+          <a class="btn btn-white" href="/academy"><span data-ru="Открыть программу">Бағдарламаны ашу</span><span data-icon="arrow"></span></a>
         </div>
       </div>
     </section>
@@ -142,9 +147,9 @@
             <div class="mc-top"><span data-icon="exchange"></span><h4>Валюта бағамдары</h4></div>
             <p class="mc-sub">USD / EUR / RUB — KZT</p>
             <ul class="mc-rows" id="rates-list">
-              <li><span>USD / KZT</span><b data-rate="USD">446,84</b></li>
-              <li><span>EUR / KZT</span><b data-rate="EUR">512,90</b></li>
-              <li><span>RUB / KZT</span><b data-rate="RUB">5,28</b></li>
+              <li><span>USD / KZT</span><b data-rate="USD">—</b></li>
+              <li><span>EUR / KZT</span><b data-rate="EUR">—</b></li>
+              <li><span>RUB / KZT</span><b data-rate="RUB">—</b></li>
             </ul>
             <p class="mc-note" id="rates-note">ҚР Ұлттық Банкінің ресми бағамы</p>
             <button class="btn" type="button" data-market="currency">Бағамдарды көру <span data-icon="arrow"></span></button>
@@ -256,6 +261,6 @@
 
   <script src="/js/i18n-ru.js"></script>
   <script src="/js/app.js"></script>
-  <script src="/js/home.js"></script>
+  <script type="module" src="/js/home.js"></script>
 </body>
 </html>

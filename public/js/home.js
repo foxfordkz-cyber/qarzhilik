@@ -1,14 +1,15 @@
 // QARZHЫ — басты бет
+import { bankCalculator } from "./bank-calculators.js";
+
 (function () {
   "use strict";
   const { icon, esc, api, me, openModal } = window.QZ;
 
   const fmt = (n, d = 2) => Number(n).toLocaleString("ru-RU", { minimumFractionDigits: d, maximumFractionDigits: d });
-  const money = (n) => `${Math.round(n).toLocaleString("ru-RU")} ₸`;
 
-  // Fallback бағамдар (API қолжетімсіз болса)
-  let rates = { USD: { rate: 446.84, change: 0 }, EUR: { rate: 512.9, change: 0 }, RUB: { rate: 5.28, change: 0 }, CNY: { rate: 62.1, change: 0 } };
+  let rates = {};
   let ratesDate = null;
+  let ratesRequest;
 
   document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("about-art").innerHTML = aboutArt();
@@ -17,6 +18,8 @@
     loadRates();
     loadBanks().then(fillMarketStats);
     document.querySelectorAll("[data-market]").forEach((b) => b.addEventListener("click", () => MARKET[b.dataset.market]()));
+    const requestedMarket = new URLSearchParams(location.search).get("market");
+    if (["credit", "deposit"].includes(requestedMarket)) MARKET[requestedMarket]();
 
     me().then(({ user }) => {
       if (!user) return;
@@ -70,8 +73,10 @@
   // ---------- Rates ----------
   async function loadRates() {
     try {
-      const data = await api("/api/rates");
-      rates = { ...rates, ...data.rates };
+      ratesRequest ||= api("/api/rates");
+      const data = await ratesRequest;
+      rates = Object.fromEntries(Object.entries(data.rates).filter(([, entry]) => Number.isFinite(entry?.rate) && entry.rate > 0));
+      if (!Object.keys(rates).length) throw new Error("Empty exchange rates");
       ratesDate = data.date;
       document.querySelectorAll("[data-rate]").forEach((el) => {
         const r = rates[el.dataset.rate];
@@ -79,9 +84,10 @@
         const chg = r.change ? `<span class="chg">${r.change > 0 ? "▲" : "▼"} ${fmt(Math.abs(r.change))}</span>` : "";
         el.innerHTML = fmt(r.rate) + chg;
       });
-      document.getElementById("rates-note").textContent = `ҚР Ұлттық Банкінің ресми бағамы · ${data.date}`;
+      document.getElementById("rates-note").textContent = [T("ҚР Ұлттық Банкінің ресми бағамы", "Официальные курсы Нацбанка РК"), ratesDate].filter(Boolean).join(" · ");
     } catch {
-      /* статикалық мәндер қалады */
+      ratesRequest = null;
+      document.getElementById("rates-note").textContent = T("Ресми бағамдар уақытша қолжетімсіз", "Официальные курсы временно недоступны");
     }
   }
 
@@ -204,77 +210,38 @@
   const freshness = (banks, section) => {
     const dates = banks.map((b) => (section === "deposits" ? b.depositsDate : b.loansDate)).filter(Boolean).sort();
     const last = dates[dates.length - 1];
+    if (!last) return T("Каталог күні көрсетілмеген", "Дата каталога не указана");
     const autoCount = banks.filter((b) => (section === "deposits" ? b.depositsAuto : b.loansAuto)).length;
+    if (!autoCount) return T(`Каталог деректері · ${fmtDate(last)}`, `Данные каталога от ${fmtDate(last)}`);
     return T(
       `${autoCount} банк автоматты жаңартылады · соңғы жаңарту ${fmtDate(last)}`,
       `${autoCount} ${plural(autoCount, "банк обновляется", "банка обновляются", "банков обновляются")} автоматически · последнее обновление ${fmtDate(last)}`
     );
   };
 
-  function annuity(principal, yearRate, months) {
-    const r = yearRate / 100 / 12;
-    if (!r) return principal / months;
-    return (principal * r) / (1 - Math.pow(1 + r, -months));
-  }
-
-  function loanCalc(defaults) {
-    return `
-      <div class="calc" data-calc="loan">
-        <div class="calc-grid">
-          <label>${T("Сома, ₸", "Сумма, ₸")}<input type="number" name="amount" min="10000" step="10000" value="${defaults.amount}"></label>
-          <label>${T("Жылдық мөлшерлеме, %", "Годовая ставка, %")}<input type="number" name="rate" min="0" max="60" step="0.1" value="${defaults.rate}"></label>
-          <label>${T("Мерзім, ай", "Срок, мес.")}<input type="number" name="months" min="1" max="360" step="1" value="${defaults.months}"></label>
+  function showBankDirectory(modal, section, renderCard) {
+    const directory = modal.querySelector("[data-bank-directory]");
+    loadBanks().then(({ banks }) => {
+      if (!banks.length) {
+        directory.textContent = T("Банк каталогын жүктеу мүмкін болмады.", "Не удалось загрузить каталог банков.");
+        return;
+      }
+      directory.innerHTML = `
+        <div class="bc-directory-bar">
+          <label class="bc-field"><span>${T("Банк", "Банк")}</span>
+            <select><option value="">${T("Барлық банктер", "Все банки")}</option>
+              ${banks.map((bank) => `<option value="${esc(bank.id)}">${esc(bank.name)}</option>`).join("")}
+            </select>
+          </label>
+          <span class="bc-directory-date">${esc(freshness(banks, section))}</span>
         </div>
-        <div class="calc-out">
-          <div><span>${T("Ай сайынғы төлем", "Ежемесячный платёж")}</span><b data-out="pay">—</b></div>
-          <div><span>${T("Барлық төлем", "Общая сумма выплат")}</span><b data-out="total">—</b></div>
-          <div><span>${T("Артық төлем", "Переплата")}</span><b data-out="over">—</b></div>
-        </div>
-      </div>`;
-  }
-  function bindLoan(modal) {
-    const c = modal.querySelector('[data-calc="loan"]');
-    const run = () => {
-      const a = +c.querySelector("[name=amount]").value || 0;
-      const r = +c.querySelector("[name=rate]").value || 0;
-      const m = Math.max(1, +c.querySelector("[name=months]").value || 1);
-      const pay = annuity(a, r, m);
-      c.querySelector('[data-out="pay"]').textContent = money(pay);
-      c.querySelector('[data-out="total"]').textContent = money(pay * m);
-      c.querySelector('[data-out="over"]').textContent = money(pay * m - a);
-    };
-    c.addEventListener("input", run);
-    run();
-  }
-
-  function depositCalc() {
-    return `
-      <div class="calc" data-calc="deposit">
-        <div class="calc-grid">
-          <label>${T("Сома, ₸", "Сумма, ₸")}<input type="number" name="amount" min="1000" step="10000" value="500000"></label>
-          <label>${T("Жылдық мөлшерлеме, %", "Годовая ставка, %")}<input type="number" name="rate" min="0" max="40" step="0.01" value="15"></label>
-          <label>${T("Мерзім, ай", "Срок, мес.")}<input type="number" name="months" min="1" max="120" value="12"></label>
-        </div>
-        <div class="calc-out">
-          <div><span>${T("Мерзім соңында", "В конце срока")}</span><b data-out="end">—</b></div>
-          <div><span>${T("Табыс", "Доход")}</span><b data-out="profit">—</b></div>
-          <div><span>${T("Тиімді мөлшерлеме", "Эффективная ставка")}</span><b data-out="eff">—</b></div>
-        </div>
-      </div>`;
-  }
-  function bindDeposit(modal) {
-    const c = modal.querySelector('[data-calc="deposit"]');
-    const run = () => {
-      const a = +c.querySelector("[name=amount]").value || 0;
-      const r = +c.querySelector("[name=rate]").value || 0;
-      const m = Math.max(1, +c.querySelector("[name=months]").value || 1);
-      const end = a * Math.pow(1 + r / 100 / 12, m);
-      c.querySelector('[data-out="end"]').textContent = money(end);
-      c.querySelector('[data-out="profit"]').textContent = money(end - a);
-      c.querySelector('[data-out="eff"]').textContent = `${fmt((Math.pow(1 + r / 100 / 12, 12) - 1) * 100)}%`;
-    };
-    c.addEventListener("input", run);
-    run();
+        <div class="bank-grid">${banks.map(renderCard).join("")}</div>`;
+      const select = directory.querySelector("select");
+      const cards = [...directory.querySelectorAll(".bank-card")];
+      select.addEventListener("change", () => {
+        cards.forEach((card, index) => { card.hidden = Boolean(select.value) && banks[index].id !== select.value; });
+      });
+    });
   }
 
   const bestOf = (items, key) => items.reduce((m, x) => (typeof x[key] === "number" && (m == null || x[key] > m) ? x[key] : m), null);
@@ -282,40 +249,17 @@
   const depName = (d) => (L() === "kk" && d.nameKk ? d.nameKk : d.name);
 
   const MARKET = {
-    async deposit() {
-      const { banks } = await loadBanks();
+    deposit() {
+      const calculator = bankCalculator("deposit", { amount: 500000, rate: 12, months: 12, compareMonths: 24 });
       openModal(
-        head("linear-gradient(135deg,#4fbf52,#1f8a36)", "piggy", T("Депозиттер", "Депозиты"), T("Банктердің депозиттік ұсыныстары", "Депозитные предложения банков")) +
+        head("linear-gradient(135deg,#4fbf52,#1f8a36)", "piggy", T("Депозиттер", "Депозиты"), T("Жинағыңызды есептеп, екі нұсқаны салыстырыңыз.", "Рассчитайте накопления и сравните два варианта.")) +
         `<div class="modal-body">
-          ${intro(
-            T(`${banks.length} банктің депозиттері. Банкті таңдап, оның ресми сайтындағы депозиттер бетіне өтіңіз.`,
-              `Депозиты ${banks.length} банков. Выберите банк и перейдите на страницу депозитов на его официальном сайте.`),
-            freshness(banks, "deposits")
-          )}
-          <div class="bank-grid">
-            ${banks.map((b, i) => {
-              const deps = b.deposits || [];
-              const best = bestOf(deps, "rate");
-              return `
-              <article class="bank-card">
-                <div class="bank-top">${badge(b, i)}<div><h5>${esc(b.name)}</h5>${bankDate(b, "deposits")}</div>${best != null ? `<span class="best">${upTo(best)}</span>` : ""}</div>
-                ${deps.length ? `<ul class="prod-list">${deps.map((d) => `
-                  <li>${prodName(depName(d), d.url)}<span class="r">${d.rate != null ? upTo(d.rate) : d.gesv != null ? `${T("ЖТСМ", "ГЭСВ")} ${pct(d.gesv)}` : "—"}</span>
-                  <span class="m">${[
-                    d.rate != null && d.gesv != null ? `${T("ЖТСМ", "ГЭСВ")} ${upTo(d.gesv)}` : "",
-                    fmtTerm(d.termMonths, "from"),
-                    (d.currencies || []).join(", "),
-                  ].filter(Boolean).join(" · ")}</span></li>`).join("")}</ul>`
-                  : `<p class="bank-empty">${T("Өнімдер мен мөлшерлемелер банктің сайтында.", "Продукты и ставки — на сайте банка.")}</p>`}
-                ${ext(b.depositsUrl || b.site, T("Депозиттерді көру", "Смотреть депозиты"))}
-              </article>`;
-            }).join("")}
-          </div>
-          <h4 style="margin-top:26px">${T("Депозит калькуляторы (ай сайын капиталдандыру)", "Депозитный калькулятор (ежемесячная капитализация)")}</h4>
-          ${depositCalc()}
+          ${calculator.html}
+          <h4 class="bc-catalog-title">${T("Банк депозиттері", "Депозиты банков")}</h4>
+          <div data-bank-directory>${T("Каталог жүктелуде…", "Загружаем каталог…")}</div>
           <h4>${T("Депозит таңдағанда нені тексеру керек?", "На что обратить внимание при выборе депозита?")}</h4>
           <ul>
-            <li>${T("Жылдық тиімді сыйақы мөлшерлемесі (ЖТСМ) — нақты табысты көрсетеді.", "Годовая эффективная ставка вознаграждения (ГЭСВ) показывает реальный доход.")}</li>
+            <li>${T("Бірдей валюта мен мерзім үшін жылдық тиімді сыйақы мөлшерлемесін (ЖТСМ) салыстырыңыз.", "Сравните годовую эффективную ставку вознаграждения (ГЭСВ) по вкладам в одной валюте на один срок.")}</li>
             <li>${T("Мерзімінен бұрын алу және толықтыру шарттары.", "Условия досрочного изъятия и пополнения.")}</li>
             <li>${T("Салымның Қазақстанның депозиттерге кепілдік беру қорымен кепілдендірілуі.", "Гарантирован ли вклад Казахстанским фондом гарантирования депозитов.")}</li>
           </ul>
@@ -325,47 +269,42 @@
           </div>
           ${fine}
         </div>`,
-        bindDeposit,
+        (modal) => {
+          calculator.bind(modal);
+          showBankDirectory(modal, "deposits", (b, i) => {
+            const deps = b.deposits || [];
+            const best = bestOf(deps, "rate");
+            return `
+            <article class="bank-card">
+              <div class="bank-top">${badge(b, i)}<div><h5>${esc(b.name)}</h5>${bankDate(b, "deposits")}</div>${best != null ? `<span class="best">${upTo(best)}</span>` : ""}</div>
+              ${deps.length ? `<ul class="prod-list">${deps.map((d) => `
+                <li>${prodName(depName(d), d.url)}<span class="r">${d.rate != null ? upTo(d.rate) : d.gesv != null ? `${T("ЖТСМ", "ГЭСВ")} ${pct(d.gesv)}` : "—"}</span>
+                <span class="m">${[
+                  d.rate != null && d.gesv != null ? `${T("ЖТСМ", "ГЭСВ")} ${upTo(d.gesv)}` : "",
+                  fmtTerm(d.termMonths, "from"),
+                  (d.currencies || []).join(", "),
+                ].filter(Boolean).join(" · ")}</span></li>`).join("")}</ul>`
+                : `<p class="bank-empty">${T("Өнімдер мен мөлшерлемелер банктің сайтында.", "Продукты и ставки — на сайте банка.")}</p>`}
+              ${ext(b.depositsUrl || b.site, T("Депозиттерді көру", "Смотреть депозиты"))}
+            </article>`;
+          });
+        },
         true
       );
     },
 
-    async credit() {
-      const { banks } = await loadBanks();
+    credit() {
+      const calculator = bankCalculator("loan", { amount: 2000000, rate: 20, months: 24, compareMonths: 36 });
       openModal(
-        head("linear-gradient(135deg,#37a8d9,#135d99)", "certificate", T("Несиелер", "Кредиты"), T("Банктердің несие түрлері", "Виды кредитов в банках")) +
+        head("linear-gradient(135deg,#37a8d9,#135d99)", "certificate", T("Несиелер", "Кредиты"), T("Төлемді есептеп, екі нұсқаны салыстырыңыз.", "Рассчитайте платёж и сравните два варианта.")) +
         `<div class="modal-body">
-          ${intro(
-            T(`${banks.length} банктің несие өнімдері. Банкті таңдап, ресми сайттағы несиелер бетіне өтіңіз.`,
-              `Кредиты ${banks.length} банков. Выберите банк и перейдите на страницу кредитов на его официальном сайте.`),
-            freshness(banks, "loans")
-          )}
-          <div class="bank-grid">
-            ${banks.map((b, i) => {
-              const loans = b.loans || [];
-              const low = lowestOf(loans.filter((l) => !l.special), "rateFrom");
-              return `
-              <article class="bank-card">
-                <div class="bank-top">${badge(b, i)}<div><h5>${esc(b.name)}</h5>${bankDate(b, "loans")}</div>${low != null ? `<span class="best blue">${from(low)}</span>` : ""}</div>
-                ${loans.length ? `<ul class="prod-list">${loans.map((l) => `
-                  <li>${prodName(loanLabel(l), l.url)}<span class="r" style="color:#135d99">${l.rateFrom != null ? from(l.rateFrom) : l.gesvFrom != null ? `${T("ЖТСМ", "ГЭСВ")} ${pct(l.gesvFrom)}` : "—"}</span>
-                  <span class="m">${[
-                    l.rateFrom != null && l.gesvFrom != null ? `${T("ЖТСМ", "ГЭСВ")} ${from(l.gesvFrom)}` : "",
-                    fmtAmount(l.maxAmount),
-                    fmtTerm(l.maxTermMonths, "to"),
-                    l.special ? `<em class="special">${T(...SPECIAL_LABEL[l.special])}</em>` : "",
-                  ].filter(Boolean).join(" · ")}</span></li>`).join("")}</ul>`
-                  : `<p class="bank-empty">${T("Несие түрлері мен шарттары банктің сайтында.", "Виды кредитов и условия — на сайте банка.")}</p>`}
-                ${ext(b.loansUrl || b.site, T("Несиелерді көру", "Смотреть кредиты"), "btn btn-green btn-sm", "background:#135d99")}
-              </article>`;
-            }).join("")}
-          </div>
-          <h4 style="margin-top:26px">${T("Несие калькуляторы (аннуитетті төлем)", "Кредитный калькулятор (аннуитетный платёж)")}</h4>
-          ${loanCalc({ amount: 2000000, rate: 20, months: 36 })}
+          ${calculator.html}
+          <h4 class="bc-catalog-title">${T("Банк несиелері", "Кредиты банков")}</h4>
+          <div data-bank-directory>${T("Каталог жүктелуде…", "Загружаем каталог…")}</div>
           <h4>${T("Несие алмас бұрын", "Перед тем как брать кредит")}</h4>
           <ul>
             <li>${T("Номиналды емес, жылдық тиімді сыйақы мөлшерлемесін (ЖТСМ) салыстырыңыз.", "Сравнивайте не номинальную ставку, а ГЭСВ — годовую эффективную ставку вознаграждения.")}</li>
-            <li>${T("Ай сайынғы төлем табысыңыздың 30–40%-ынан аспағаны жөн.", "Ежемесячный платёж лучше держать в пределах 30–40% дохода.")}</li>
+            <li>${T("Ай сайынғы төлемнен кейін міндетті шығындарға қанша ақша қалатынын есептеңіз.", "Посчитайте, сколько останется на обязательные расходы после ежемесячного платежа.")}</li>
             <li>${T("Аннуитетті және сараланған төлем кестелерін салыстырыңыз.", "Сравните аннуитетный и дифференцированный графики платежей.")}</li>
           </ul>
           <div class="links-row">
@@ -373,18 +312,42 @@
           </div>
           ${fine}
         </div>`,
-        bindLoan,
+        (modal) => {
+          calculator.bind(modal);
+          showBankDirectory(modal, "loans", (b, i) => {
+            const loans = b.loans || [];
+            const low = lowestOf(loans.filter((l) => !l.special), "rateFrom");
+            return `
+            <article class="bank-card">
+              <div class="bank-top">${badge(b, i)}<div><h5>${esc(b.name)}</h5>${bankDate(b, "loans")}</div>${low != null ? `<span class="best blue">${from(low)}</span>` : ""}</div>
+              ${loans.length ? `<ul class="prod-list">${loans.map((l) => `
+                <li>${prodName(loanLabel(l), l.url)}<span class="r" style="color:#135d99">${l.rateFrom != null ? from(l.rateFrom) : l.gesvFrom != null ? `${T("ЖТСМ", "ГЭСВ")} ${pct(l.gesvFrom)}` : "—"}</span>
+                <span class="m">${[
+                  l.rateFrom != null && l.gesvFrom != null ? `${T("ЖТСМ", "ГЭСВ")} ${from(l.gesvFrom)}` : "",
+                  fmtAmount(l.maxAmount),
+                  fmtTerm(l.maxTermMonths, "to"),
+                  l.special ? `<em class="special">${T(...SPECIAL_LABEL[l.special])}</em>` : "",
+                ].filter(Boolean).join(" · ")}</span></li>`).join("")}</ul>`
+                : `<p class="bank-empty">${T("Несие түрлері мен шарттары банктің сайтында.", "Виды кредитов и условия — на сайте банка.")}</p>`}
+              ${ext(b.loansUrl || b.site, T("Несиелерді көру", "Смотреть кредиты"), "btn btn-green btn-sm", "background:#135d99")}
+            </article>`;
+          });
+        },
         true
       );
     },
 
     async currency() {
-      const [{ banks }, live] = await Promise.all([loadBanks(), loadBankFx()]);
+      const title = head("linear-gradient(135deg,#8b87f0,#4a47c2)", "exchange", T("Валюта бағамдары", "Курсы валют"), T("Банктердегі сатып алу / сату бағамы", "Курсы покупки / продажи в банках"));
+      openModal(title + `<div class="modal-body" data-loading="currency" role="status">${T("Бағамдар жүктелуде…", "Загружаем курсы…")}</div>`, null, true);
+      const loading = document.querySelector('#modal [data-loading="currency"]');
+      const [{ banks }, live] = await Promise.all([loadBanks(), loadBankFx(), loadRates()]);
+      if (!loading.isConnected || loading.closest("[inert]")) return;
       const codes = ["USD", "EUR", "RUB"];
       const liveBy = (live && live.banks) || {};
       const cell = (r) => (r && (r.buy || r.sell) ? `${r.buy ? fmt(r.buy) : "—"} / ${r.sell ? fmt(r.sell) : "—"}` : "—");
       openModal(
-        head("linear-gradient(135deg,#8b87f0,#4a47c2)", "exchange", T("Валюта бағамдары", "Курсы валют"), T("Банктердегі сатып алу / сату бағамы", "Курсы покупки / продажи в банках")) +
+        title +
         `<div class="modal-body">
           ${intro(
             T("Әр банктің айырбастау бағамы (сатып алу / сату). Толық кесте — банктің ресми сайтында.",
@@ -406,11 +369,11 @@
           <h4 style="margin-top:22px">${T("Валюта айырбастау (ресми бағам бойынша)", "Конвертер валют (по официальному курсу)")}</h4>
           <div class="calc" data-calc="fx">
             <div class="calc-grid">
-              <label>${T("Сома", "Сумма")}<input type="number" name="amount" min="0" step="1" value="100"></label>
+              <label>${T("Сома", "Сумма")}<input type="number" name="amount" min="0" step="any" value="100"></label>
               <label>${T("Валютадан", "Из валюты")}<select name="from">${["KZT", ...codes, "CNY"].map((c) => `<option ${c === "USD" ? "selected" : ""}>${c}</option>`).join("")}</select></label>
               <label>${T("Валютаға", "В валюту")}<select name="to">${["KZT", ...codes, "CNY"].map((c) => `<option ${c === "KZT" ? "selected" : ""}>${c}</option>`).join("")}</select></label>
             </div>
-            <div class="calc-out" style="grid-template-columns:1fr">
+            <div class="calc-out" aria-live="polite" style="grid-template-columns:1fr">
               <div><span>${T("Нәтиже", "Результат")}</span><b data-out="res">—</b></div>
             </div>
           </div>
@@ -421,13 +384,20 @@
         </div>`,
         (modal) => {
           const c = modal.querySelector('[data-calc="fx"]');
-          const toKzt = (code) => (code === "KZT" ? 1 : rates[code]?.rate || 0);
+          const toKzt = (code) => code === "KZT" ? 1 : rates[code]?.rate;
           const run = () => {
-            const a = +c.querySelector("[name=amount]").value || 0;
+            const amount = c.querySelector("[name=amount]").valueAsNumber;
             const fromC = c.querySelector("[name=from]").value;
             const toC = c.querySelector("[name=to]").value;
-            const res = toKzt(toC) ? (a * toKzt(fromC)) / toKzt(toC) : 0;
-            c.querySelector('[data-out="res"]').textContent = `${fmt(res)} ${toC}`;
+            const factor = fromC === toC ? 1 : toKzt(fromC) / toKzt(toC);
+            const output = c.querySelector('[data-out="res"]');
+            if (!Number.isFinite(amount) || amount < 0) {
+              output.textContent = T("Нөл немесе оң сан енгізіңіз", "Введите сумму от нуля");
+            } else if (!Number.isFinite(factor * amount)) {
+              output.textContent = T("Бағам қолжетімсіз", "Курс недоступен");
+            } else {
+              output.textContent = `${fmt(amount * factor)} ${toC}`;
+            }
           };
           c.addEventListener("input", run);
           c.addEventListener("change", run);
@@ -439,6 +409,7 @@
 
     async mortgage() {
       const ot = await loadOtbasy();
+      const calculator = bankCalculator("loan", { heading: T("Ипотека калькуляторы", "Ипотечный калькулятор"), amount: 25000000, rate: 9, months: 228, compareMonths: 180 });
       const programs = ot?.programs || [];
       const groups = ot?.groups || [];
       const zh = ot?.zhss || {};
@@ -480,8 +451,7 @@
           <div class="prog-grid">
             ${programs.map(card).join("") || `<p class="bank-empty">Бағдарламалар тізімі Отбасы банктің сайтында.</p>`}
           </div>
-          <h4 style="margin-top:26px">Ипотека калькуляторы</h4>
-          ${loanCalc({ amount: 25000000, rate: 9, months: 228 })}
+          ${calculator.html}
           <h4>Ипотека алмас бұрын</h4>
           <ul>
             <li>Бастапқы жарнаның мөлшерін және қатысушыға қойылатын талаптарды тексеріңіз.</li>
@@ -495,7 +465,7 @@
           ${fine}
         </div>`,
         (modal) => {
-          bindLoan(modal);
+          calculator.bind(modal);
           modal.querySelectorAll("[data-seg]").forEach((b) =>
             b.addEventListener("click", () => {
               modal.querySelectorAll("[data-seg]").forEach((x) => x.classList.toggle("is-active", x === b));

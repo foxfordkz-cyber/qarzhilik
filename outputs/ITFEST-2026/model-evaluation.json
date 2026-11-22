@@ -1,0 +1,397 @@
+{
+  "version": "QARZHY Guide 1.1",
+  "rows": [
+    {
+      "language": "kk",
+      "question": "Шәкіртақы түсті, айдың аяғына дейін ақшаны қалай бөлемін?",
+      "expected": "budget",
+      "actual": "budget",
+      "correct": true
+    },
+    {
+      "language": "kk",
+      "question": "Азық-түлік пен жол шығынын бір аптаға жоспарласам деймін",
+      "expected": "budget",
+      "actual": "budget",
+      "correct": true
+    },
+    {
+      "language": "kk",
+      "question": "Табысты міндетті төлемдерге қалай бөлуге болады?",
+      "expected": "budget",
+      "actual": "budget",
+      "correct": true
+    },
+    {
+      "language": "kk",
+      "question": "Ай сайын ұсақ сатып алуларға қанша кететінін білгім келеді",
+      "expected": "budget",
+      "actual": "unknown",
+      "correct": false
+    },
+    {
+      "language": "kk",
+      "question": "Жазға дейін сапарға қаражат жинау үшін айына қанша саламын?",
+      "expected": "savings",
+      "actual": "savings",
+      "correct": true
+    },
+    {
+      "language": "kk",
+      "question": "Жұмыстан айырылсам, резервім болғанын қалаймын",
+      "expected": "savings",
+      "actual": "unknown",
+      "correct": false
+    },
+    {
+      "language": "kk",
+      "question": "Оқу ақысын төлеуге екі жылда ақша жинап үлгеремін бе?",
+      "expected": "savings",
+      "actual": "savings",
+      "correct": true
+    },
+    {
+      "language": "kk",
+      "question": "Алдағы алты айда ноутбукке ақша жинасам деймін",
+      "expected": "savings",
+      "actual": "savings",
+      "correct": true
+    },
+    {
+      "language": "kk",
+      "question": "Екі банктің несие шарттарын салыстыруды үйренгім келеді",
+      "expected": "credit",
+      "actual": "credit",
+      "correct": true
+    },
+    {
+      "language": "kk",
+      "question": "Бөліп төлесем, тауардың толық бағасы қанша болады?",
+      "expected": "credit",
+      "actual": "credit",
+      "correct": true
+    },
+    {
+      "language": "kk",
+      "question": "Банк қарызының үстіне қанша пайыз төлеймін?",
+      "expected": "credit",
+      "actual": "credit",
+      "correct": true
+    },
+    {
+      "language": "kk",
+      "question": "Айлық төлемі аз несие әрқашан арзан ба?",
+      "expected": "credit",
+      "actual": "credit",
+      "correct": true
+    },
+    {
+      "language": "kk",
+      "question": "Өзін банкирмін деген адам SMS кодымды айтуды сұрайды",
+      "expected": "fraud",
+      "actual": "fraud",
+      "correct": true
+    },
+    {
+      "language": "kk",
+      "question": "Банкке ұқсайтын сайттағы сілтеме күмәнді көрінеді",
+      "expected": "fraud",
+      "actual": "fraud",
+      "correct": true
+    },
+    {
+      "language": "kk",
+      "question": "Телефон соғып ақшамды қауіпсіз шотқа жібер дейді",
+      "expected": "fraud",
+      "actual": "fraud",
+      "correct": true
+    },
+    {
+      "language": "kk",
+      "question": "Танысымның аккаунтынан құпиясөз сұраған хабар келді",
+      "expected": "fraud",
+      "actual": "fraud",
+      "correct": true
+    },
+    {
+      "language": "kk",
+      "question": "Қай есептен фирманың клиенттерден алған нақты ақшасын көремін?",
+      "expected": "reporting",
+      "actual": "reporting",
+      "correct": true
+    },
+    {
+      "language": "kk",
+      "question": "Кәсіпорын балансының екі жағы неге тең болуы керек?",
+      "expected": "reporting",
+      "actual": "unknown",
+      "correct": false
+    },
+    {
+      "language": "kk",
+      "question": "Дүкен пайда тапты, бірақ кассада ақша аз. Мұны қандай есептер түсіндіреді?",
+      "expected": "reporting",
+      "actual": "reporting",
+      "correct": true
+    },
+    {
+      "language": "kk",
+      "question": "Фирманың активтері мен міндеттемелерін салыстырғым келеді",
+      "expected": "reporting",
+      "actual": "reporting",
+      "correct": true
+    },
+    {
+      "language": "kk",
+      "question": "Жобаның болашақ түсімдерін бүгінгі ақшамен бағалау жолы қандай?",
+      "expected": "projects",
+      "actual": "projects",
+      "correct": true
+    },
+    {
+      "language": "kk",
+      "question": "Екі инвестициялық жобаның қайсысы көбірек құн жасайды?",
+      "expected": "projects",
+      "actual": "projects",
+      "correct": true
+    },
+    {
+      "language": "kk",
+      "question": "NPV теріс шықса, нәтиже нені білдіреді?",
+      "expected": "projects",
+      "actual": "projects",
+      "correct": true
+    },
+    {
+      "language": "kk",
+      "question": "Жабдыққа жұмсаған бастапқы инвестиция неше жылда өтеледі?",
+      "expected": "projects",
+      "actual": "projects",
+      "correct": true
+    },
+    {
+      "language": "kk",
+      "question": "Ертең Астанада қар жауа ма?",
+      "expected": "unknown",
+      "actual": "unknown",
+      "correct": true
+    },
+    {
+      "language": "kk",
+      "question": "Макарон пісіруге қанша минут керек?",
+      "expected": "unknown",
+      "actual": "unknown",
+      "correct": true
+    },
+    {
+      "language": "kk",
+      "question": "Тригонометрия есебін шығарып берші",
+      "expected": "unknown",
+      "actual": "budget",
+      "correct": false
+    },
+    {
+      "language": "kk",
+      "question": "Сатурнның сақиналары неден тұрады?",
+      "expected": "unknown",
+      "actual": "unknown",
+      "correct": true
+    },
+    {
+      "language": "ru",
+      "question": "До стипендии десять дней, как распланировать покупки?",
+      "expected": "budget",
+      "actual": "budget",
+      "correct": true
+    },
+    {
+      "language": "ru",
+      "question": "Хочу увидеть расходы за неделю в одной таблице",
+      "expected": "budget",
+      "actual": "budget",
+      "correct": true
+    },
+    {
+      "language": "ru",
+      "question": "Зарплата пришла, как разнести её на квартплату и еду?",
+      "expected": "budget",
+      "actual": "budget",
+      "correct": true
+    },
+    {
+      "language": "ru",
+      "question": "Мелкие траты съедают всё, как начать их учитывать?",
+      "expected": "budget",
+      "actual": "budget",
+      "correct": true
+    },
+    {
+      "language": "ru",
+      "question": "За год хочу собрать деньги на курсы вождения",
+      "expected": "savings",
+      "actual": "unknown",
+      "correct": false
+    },
+    {
+      "language": "ru",
+      "question": "Как собрать запас на случай увольнения?",
+      "expected": "savings",
+      "actual": "savings",
+      "correct": true
+    },
+    {
+      "language": "ru",
+      "question": "Какую сумму в месяц отложить на путешествие?",
+      "expected": "savings",
+      "actual": "savings",
+      "correct": true
+    },
+    {
+      "language": "ru",
+      "question": "Хочу накопить к весне на компьютер",
+      "expected": "savings",
+      "actual": "savings",
+      "correct": true
+    },
+    {
+      "language": "ru",
+      "question": "У займа небольшая ставка, но есть комиссия за выдачу",
+      "expected": "credit",
+      "actual": "credit",
+      "correct": true
+    },
+    {
+      "language": "ru",
+      "question": "Как сравнить два предложения по рассрочке?",
+      "expected": "credit",
+      "actual": "unknown",
+      "correct": false
+    },
+    {
+      "language": "ru",
+      "question": "Сколько денег я переплачу за телефон в кредит?",
+      "expected": "credit",
+      "actual": "credit",
+      "correct": true
+    },
+    {
+      "language": "ru",
+      "question": "Почему при длинном сроке долг обходится дороже?",
+      "expected": "credit",
+      "actual": "unknown",
+      "correct": false
+    },
+    {
+      "language": "ru",
+      "question": "Позвонили из банка и требуют назвать пароль из сообщения",
+      "expected": "fraud",
+      "actual": "fraud",
+      "correct": true
+    },
+    {
+      "language": "ru",
+      "question": "Я получил ссылку на поддельную страницу банка",
+      "expected": "fraud",
+      "actual": "fraud",
+      "correct": true
+    },
+    {
+      "language": "ru",
+      "question": "Человек по телефону убеждает перевести всё на защищённый счёт",
+      "expected": "fraud",
+      "actual": "fraud",
+      "correct": true
+    },
+    {
+      "language": "ru",
+      "question": "В переписке за выигрыш хотят получить код подтверждения",
+      "expected": "fraud",
+      "actual": "fraud",
+      "correct": true
+    },
+    {
+      "language": "ru",
+      "question": "Где искать реальные поступления от покупателей в отчётности?",
+      "expected": "reporting",
+      "actual": "reporting",
+      "correct": true
+    },
+    {
+      "language": "ru",
+      "question": "Почему баланс предприятия должен сходиться?",
+      "expected": "reporting",
+      "actual": "reporting",
+      "correct": true
+    },
+    {
+      "language": "ru",
+      "question": "У магазина прибыль на бумаге, а касса почти пустая. Какие отчёты сравнить?",
+      "expected": "reporting",
+      "actual": "reporting",
+      "correct": true
+    },
+    {
+      "language": "ru",
+      "question": "Как узнать, что принадлежит компании и сколько она должна?",
+      "expected": "reporting",
+      "actual": "reporting",
+      "correct": true
+    },
+    {
+      "language": "ru",
+      "question": "Как привести будущую выручку проекта к сегодняшним деньгам?",
+      "expected": "projects",
+      "actual": "projects",
+      "correct": true
+    },
+    {
+      "language": "ru",
+      "question": "Какой из двух инвестиционных проектов создаст больше стоимости?",
+      "expected": "projects",
+      "actual": "projects",
+      "correct": true
+    },
+    {
+      "language": "ru",
+      "question": "Что означает отрицательная NPV?",
+      "expected": "projects",
+      "actual": "projects",
+      "correct": true
+    },
+    {
+      "language": "ru",
+      "question": "Через сколько лет окупятся вложения в оборудование?",
+      "expected": "projects",
+      "actual": "projects",
+      "correct": true
+    },
+    {
+      "language": "ru",
+      "question": "Когда в Астане начнётся снег?",
+      "expected": "unknown",
+      "actual": "unknown",
+      "correct": true
+    },
+    {
+      "language": "ru",
+      "question": "Сколько минут варить макароны?",
+      "expected": "unknown",
+      "actual": "unknown",
+      "correct": true
+    },
+    {
+      "language": "ru",
+      "question": "Помоги разобрать уравнение по алгебре",
+      "expected": "unknown",
+      "actual": "unknown",
+      "correct": true
+    },
+    {
+      "language": "ru",
+      "question": "Почему у Сатурна есть кольца?",
+      "expected": "unknown",
+      "actual": "unknown",
+      "correct": true
+    }
+  ]
+}

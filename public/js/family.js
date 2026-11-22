@@ -3,6 +3,7 @@ import { wholeTenge, readExpenses, planBudget } from './family-budget.js';
 
 const labels = {
   kk: {
+    home: 'Басты бет',
     title: 'Отбасы бюджеті', intro: 'Бір айға кіріс пен шығынды жоспарлаңыз. ЖИ шығындарды санаттарға бөледі, ал жоспар мақсатыңызға қанша ақша қалатынын көрсетеді.',
     planHeading:'Айлық жоспар', income:'Отбасының айлық кірісі', goal:'Мақсатқа әлі қажет сома', months:'Мақсатқа дейінгі ай саны', monthUnit:'ай',
     expensesHeading:'Жоспарланған шығындар', hint:'Әр жолға атауын және сомасын бүтін теңгемен жазыңыз. Шығын болмаса, бос қалдырыңыз.',
@@ -23,6 +24,7 @@ const labels = {
     atLimit:'Айлық кіріс жоспарланған шығын мен жинақты дәл жабады.'
   },
   ru: {
+    home: 'На главную',
     title:'Семейный бюджет',intro:'Спланируйте доходы и расходы на месяц. ИИ разнесёт траты по категориям, а расчёт покажет, сколько семья сможет отложить на цель.',
     planHeading:'План на месяц', income:'Доход семьи за месяц', goal:'Сколько ещё нужно накопить', months:'Месяцев до цели', monthUnit:'мес.',
     expensesHeading:'Планируемые расходы',hint:'На каждой строке укажите название и сумму в целых тенге. Если расходов нет, оставьте поле пустым.',
@@ -180,6 +182,7 @@ function translate() {
   for (const node of document.querySelectorAll('[data-lang]')) node.setAttribute('aria-pressed',String(node.dataset.lang===lang));
   get('expenses').placeholder = ui.examples.slice(0,2).join('\n');
   get('brand').href = fileMode ? '#planner' : '/?lang='+lang;
+  get('portal-back').hidden = fileMode;
   clearError(); if (plan) drawPlan();
 }
 for (const node of document.querySelectorAll('[data-lang]')) node.onclick = () => {

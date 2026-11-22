@@ -265,9 +265,9 @@
   // ---------- Header / Footer ----------
   const NAV = [
     { href: "/#home", id: "home", label: "Басты бет" },
-    { href: "/family", id: "family", label: "Бюджет" },
-    { href: "/academy", id: "learn", label: "Academy" },
+    { href: "/#learn", id: "learn", label: "Оқу" },
     { href: "/#world", id: "world", label: "Қаржы әлемі" },
+    { href: "/family", id: "family", label: "Отбасы бюджеті" },
     { href: "/#about", id: "about", label: "QARZHЫ туралы" },
   ];
 
@@ -298,17 +298,19 @@
 
     bindLangSwitch(host);
     const toggle = host.querySelector(".nav-toggle");
-    toggle.addEventListener("click", () => {
-      const open = host.classList.toggle("is-open");
+    function setMenuOpen(open) {
+      host.classList.toggle("is-open", open);
       toggle.setAttribute("aria-expanded", String(open));
       toggle.innerHTML = icon(open ? "close" : "menu");
+    }
+    toggle.addEventListener("click", () => setMenuOpen(!host.classList.contains("is-open")));
+    host.querySelectorAll(".nav-links a").forEach((a) => a.addEventListener("click", () => setMenuOpen(false)));
+    host.addEventListener("keydown", (event) => {
+      if (event.key === "Escape" && host.classList.contains("is-open")) {
+        setMenuOpen(false);
+        toggle.focus();
+      }
     });
-    host.querySelectorAll(".nav-links a").forEach((a) =>
-      a.addEventListener("click", () => {
-        host.classList.remove("is-open");
-        toggle.innerHTML = icon("menu");
-      })
-    );
 
     const onScroll = () => host.classList.toggle("is-scrolled", window.scrollY > 30);
     onScroll();
@@ -342,6 +344,8 @@
             <ul>
               <li><a href="/course?c=life">Өмірге қажетті қаржы</a></li>
               <li><a href="/course?c=pro">Кәсіби қаржы</a></li>
+              <li><a href="/academy">QARZHЫ Academy</a></li>
+              <li><a href="/guide">QARZHЫ Guide</a></li>
               <li><a href="/cabinet">Жеке кабинет</a></li>
             </ul>
           </div>
@@ -383,6 +387,7 @@
   }
 
   // ---------- Modal ----------
+  let modalOpener;
   function openModal(html, onReady, wide) {
     let modal = document.getElementById("modal");
     if (!modal) {
@@ -393,19 +398,45 @@
       modal.setAttribute("aria-modal", "true");
       document.body.appendChild(modal);
       modal.addEventListener("click", (e) => { if (e.target === modal || e.target.closest(".modal-close")) closeModal(); });
-      document.addEventListener("keydown", (e) => { if (e.key === "Escape") closeModal(); });
+      modal.addEventListener("keydown", (e) => {
+        if (e.key === "Escape") {
+          e.preventDefault();
+          closeModal();
+        } else if (e.key === "Tab") {
+          const controls = [...modal.querySelectorAll("a[href], button, input, select, textarea, summary, [tabindex='0']")]
+            .filter((el) => !el.disabled && el.tabIndex >= 0 && el.getClientRects().length > 0);
+          const first = controls[0];
+          const last = controls.at(-1);
+          if (e.shiftKey && document.activeElement === first || !e.shiftKey && document.activeElement === last) {
+            e.preventDefault();
+            (e.shiftKey ? last : first)?.focus();
+          }
+        }
+      });
     }
+    if (!modal.contains(document.activeElement)) modalOpener = document.activeElement;
+    modal.inert = false;
     modal.innerHTML = `<div class="modal-box ${wide ? "wide" : ""}">${html}<button class="modal-close" type="button" aria-label="Жабу">${icon("close")}</button></div>`;
-    requestAnimationFrame(() => modal.classList.add("is-open"));
+    const heading = modal.querySelector("h3, h2");
+    if (heading) {
+      heading.id = "market-dialog-title";
+      modal.setAttribute("aria-labelledby", heading.id);
+    }
+    modal.classList.add("is-open");
     document.body.style.overflow = "hidden";
     onReady && onReady(modal);
     modal.querySelector(".modal-close").focus({ preventScroll: true });
   }
   function closeModal() {
     const modal = document.getElementById("modal");
-    if (!modal) return;
+    if (!modal || modal.inert) return;
     modal.classList.remove("is-open");
+    modal.inert = true;
     document.body.style.overflow = "";
+    const fallback = document.querySelector("[data-market]");
+    const returnTarget = modalOpener?.isConnected && modalOpener !== document.body ? modalOpener : fallback;
+    returnTarget?.focus({ preventScroll: true });
+    modalOpener = null;
   }
 
   window.QZ = { LANG, tr, MOOC_URL, COURSES, icon, loadCourse, api, me, logout, esc, qs, toast, renderIcons, videoBlock, initReveal, openModal, closeModal };

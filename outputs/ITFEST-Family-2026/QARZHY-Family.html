@@ -15,7 +15,9 @@ button { touch-action:manipulation; }
 .shell { max-width:1110px; padding:0 32px; margin:auto; }
 .top { background:var(--ink); color:white; }
 .top-inner { display:flex; justify-content:space-between; align-items:center; min-height:62px; }
-.wordmark { color:white; font-size:25px; letter-spacing:-1.2px; font-weight:800; text-decoration:none; }
+.wordmark { display:inline-flex; align-items:center; gap:12px; color:white; font-size:25px; letter-spacing:-1.2px; font-weight:800; text-decoration:none; }
+#portal-back { padding-right:12px; border-right:1px solid #709382; font-size:14px; letter-spacing:0; font-weight:500; }
+.wordmark:hover #portal-back { text-decoration:underline; }
 .lang { display:flex; gap:2px; padding:3px; border:1px solid #709382; border-radius:30px; }
 .lang button { border:0; border-radius:20px; background:none; color:#fff; font-size:13px; font-weight:700; padding:4px 12px; }
 .lang button[aria-pressed="true"] { color:var(--ink); background:#d8e9ce; }
@@ -89,7 +91,7 @@ main { padding-bottom:50px!important; }
 </head>
 <body>
   <header class="top"><div class="shell top-inner">
-    <a href="/" id="brand" class="wordmark" aria-label="QARZHЫ">QARZHЫ</a>
+    <a href="/" id="brand" class="wordmark"><span id="portal-back" hidden><span aria-hidden="true">←</span> <span data-t="home">Басты бет</span></span>QARZHЫ</a>
     <div class="lang" aria-label="Тіл / Язык"><button type="button" data-lang="kk" aria-pressed="true" lang="kk">ҚАЗ</button><button type="button" data-lang="ru" aria-pressed="false" lang="ru">РУС</button></div>
   </div></header>
   <main class="shell">
@@ -392,6 +394,7 @@ main { padding-bottom:50px!important; }
   // public/js/family.js
   var labels = {
     kk: {
+      home: "Басты бет",
       title: "Отбасы бюджеті",
       intro: "Бір айға кіріс пен шығынды жоспарлаңыз. ЖИ шығындарды санаттарға бөледі, ал жоспар мақсатыңызға қанша ақша қалатынын көрсетеді.",
       planHeading: "Айлық жоспар",
@@ -431,6 +434,7 @@ main { padding-bottom:50px!important; }
       atLimit: "Айлық кіріс жоспарланған шығын мен жинақты дәл жабады."
     },
     ru: {
+      home: "На главную",
       title: "Семейный бюджет",
       intro: "Спланируйте доходы и расходы на месяц. ИИ разнесёт траты по категориям, а расчёт покажет, сколько семья сможет отложить на цель.",
       planHeading: "План на месяц",
@@ -632,6 +636,7 @@ main { padding-bottom:50px!important; }
     for (const node of document.querySelectorAll("[data-lang]")) node.setAttribute("aria-pressed", String(node.dataset.lang === lang));
     get("expenses").placeholder = ui.examples.slice(0, 2).join("\n");
     get("brand").href = fileMode ? "#planner" : "/?lang=" + lang;
+    get("portal-back").hidden = fileMode;
     clearError();
     if (plan) drawPlan();
   }

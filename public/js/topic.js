@@ -1,7 +1,7 @@
 // QARZHЫ — тақырып беті: конспект, тест, прогресс
 (function () {
   "use strict";
-  const { COURSES, MOOC_URL, icon, esc, qs, loadCourse, me, api, toast, videoBlock, initReveal } = window.QZ;
+  const { COURSES, LANG, MOOC_URL, icon, esc, qs, loadCourse, me, api, toast, videoBlock, initReveal } = window.QZ;
 
   let state = { id: null, topic: null, topics: [], user: null, done: new Set(), quizScore: null };
 
@@ -55,6 +55,11 @@
     const { id, topic, topics } = state;
     const prev = topics[index - 1];
     const next = topics[index + 1];
+    const tools = {
+      nesie: { market: "credit", kk: "Несие төлемдерін салыстыру", ru: "Сравнить платежи по кредитам" },
+      zhinaq: { market: "deposit", kk: "Депозит кірісін салыстыру", ru: "Сравнить доход по депозитам" },
+    };
+    const tool = id === "life" && tools[topic.slug];
 
     document.getElementById("article").innerHTML = `
       <div class="block reveal">
@@ -90,6 +95,7 @@
       <div class="block practice reveal">
         <h2 class="block-title"><span class="bt-ic">${icon("pencil")}</span>Практикалық тапсырма</h2>
         <p>${esc(topic.practice)}</p>
+        ${tool ? `<a class="btn btn-green practice-tool" href="/?lang=${LANG}&amp;market=${tool.market}#world">${icon("calculator")}${tool[LANG]}</a>` : ""}
       </div>
 
       <div class="block reveal" id="quiz">

@@ -24,7 +24,11 @@
         <label for="question" id="question-label">Сұрағыңыз</label>
         <textarea id="question" maxlength="400" rows="3" placeholder="Мысалы, шәкіртақымды бір айға қалай жеткіземін?" required aria-describedby="privacy"></textarea>
         <p class="privacy" id="privacy">Мәтін осы браузерде өңделеді. Аты-жөніңізді, карта нөмірін немесе құпия кодты енгізбеңіз.</p>
-        <div class="form-actions"><button class="action" type="submit" id="recommend">Жаттығу таңдау</button><button type="button" class="text-button" id="example">Мысал енгізу</button></div>
+        <div class="form-actions">
+          <button class="action" type="submit" id="recommend">Жаттығу таңдау</button>
+          <button type="button" class="text-button" id="example">Жеке қаржы мысалы</button>
+          <button type="button" class="text-button" id="example-pro">Кәсіби қаржы мысалы</button>
+        </div>
       </form>
       <section id="result" tabindex="-1" hidden aria-labelledby="result-title">
         <p class="caption" id="result-label"></p><h2 id="result-title"></h2><p id="lesson-note"></p>
@@ -34,7 +38,7 @@
         </fieldset>
         <a class="more" id="full-lesson" hidden></a>
       </section>
-      <aside id="scope"><h2 id="scope-title">Модель қандай тақырыптарды таниды?</h2><p id="scope-text">Бюджет, жинақ, несие және қаржылық алаяқтық. Нәтиже оқу тақырыбын таңдауға арналған.</p></aside>
+      <aside id="scope"><h2 id="scope-title">Қандай сұрақ қоюға болады?</h2><p id="scope-text">Бюджет, жинақ, несие немесе алаяқтық туралы сұраңыз. Кәсіби бағытта компанияның қаржылық есептілігі мен инвестициялық жобаларды бағалау тақырыптары бар.</p></aside>
     </div>
   </main>
   <noscript>ЖИ жұмыс істеуі үшін JavaScript қосыңыз. Для работы модели включите JavaScript.</noscript>

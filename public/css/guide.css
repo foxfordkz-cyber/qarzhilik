@@ -1,4 +1,4 @@
-:root { color-scheme: light; --forest: #103e32; --ink: #173b30; --line: #c8d5c9; --paper: #faf9f4; --quiet: #495e55; --gold: #f7bf72; }
+:root { color-scheme: light; --forest: #0c3a25; --ink: #0f1f17; --line: #dfe7df; --paper: #f7faf6; --quiet: #465c4f; --lime: #a6d96a; --pro: #0c4a8c; }
 * { box-sizing: border-box; }
 [hidden] { display: none !important; }
 body { margin: 0; background: var(--paper); color: var(--ink); font: 17px/1.55 Inter, "Segoe UI", Arial, sans-serif; }
@@ -13,7 +13,7 @@ button { cursor: pointer; }
 .language { display: flex; gap: 3px; padding: 3px; background: #edf1ea; border-radius: 24px; }
 .language button { background: transparent; border: 0; color: var(--forest); padding: 5px 11px; font-size: 13px; font-weight: 700; border-radius: 24px; }
 .language button[aria-pressed="true"] { background: var(--forest); color: #fff; }
-.intro { background: var(--forest); color: #fff; }
+.intro { background: linear-gradient(112deg, #07261a, var(--forest) 65%, #125232); color: #fff; }
 .intro-inner { padding-top: 30px; padding-bottom: 29px; }
 h1 { margin: 0 0 10px; max-width: 900px; font-size: clamp(32px,4.8vw,56px); line-height: 1.08; letter-spacing: -.035em; }
 .intro p { max-width: 730px; color: #dfeddf; margin: 0; font-size: 18px; }
@@ -24,12 +24,14 @@ textarea { display: block; margin-top: 8px; padding: 13px 16px; resize: vertical
 .privacy { color: var(--quiet); font-size: 14px; margin: 6px 0 13px; }
 .form-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 23px; }
 .action, .option { border-radius: 8px; padding: 9px 17px; font-weight: 650; }
-.action { border: 1px solid #efb26a; background: var(--gold); color: #342008; }
-.action:hover { background: #f6ad55; }
+.action { border: 1px solid #7cc242; background: var(--lime); color: #07261a; }
+.action:hover { background: #95d450; }
 .text-button { background: transparent; border: 0; text-underline-offset: 4px; text-decoration: underline; color: var(--forest); padding: 8px 0; }
 :is(a,button,textarea):focus-visible { outline: 3px solid #2767a5; outline-offset: 3px; }
 #result { border-top: 3px solid #316d50; margin-top: 26px; padding: 16px 0 0; scroll-margin-top: 20px; }
 .caption { color: #346248; font-weight: 700; font-size: 14px; margin: 0 0 2px; }
+#result[data-course="pro"] { border-top-color: var(--pro); }
+#result[data-course="pro"] :is(.caption,.more) { color: var(--pro); }
 h2 { margin: 0; font-size: clamp(24px,3.6vw,38px); line-height: 1.15; letter-spacing: -.027em; }
 #lesson-note { margin: 8px 0 14px; }
 fieldset { border: 0; margin: 0; padding: 0; min-width: 0; }

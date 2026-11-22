@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#103e32">
   <title>QARZHЫ Guide</title>
-  <style>:root { color-scheme: light; --forest: #103e32; --ink: #173b30; --line: #c8d5c9; --paper: #faf9f4; --quiet: #495e55; --gold: #f7bf72; }
+  <style>:root { color-scheme: light; --forest: #0c3a25; --ink: #0f1f17; --line: #dfe7df; --paper: #f7faf6; --quiet: #465c4f; --lime: #a6d96a; --pro: #0c4a8c; }
 * { box-sizing: border-box; }
 [hidden] { display: none !important; }
 body { margin: 0; background: var(--paper); color: var(--ink); font: 17px/1.55 Inter, "Segoe UI", Arial, sans-serif; }
@@ -20,7 +20,7 @@ button { cursor: pointer; }
 .language { display: flex; gap: 3px; padding: 3px; background: #edf1ea; border-radius: 24px; }
 .language button { background: transparent; border: 0; color: var(--forest); padding: 5px 11px; font-size: 13px; font-weight: 700; border-radius: 24px; }
 .language button[aria-pressed="true"] { background: var(--forest); color: #fff; }
-.intro { background: var(--forest); color: #fff; }
+.intro { background: linear-gradient(112deg, #07261a, var(--forest) 65%, #125232); color: #fff; }
 .intro-inner { padding-top: 30px; padding-bottom: 29px; }
 h1 { margin: 0 0 10px; max-width: 900px; font-size: clamp(32px,4.8vw,56px); line-height: 1.08; letter-spacing: -.035em; }
 .intro p { max-width: 730px; color: #dfeddf; margin: 0; font-size: 18px; }
@@ -31,12 +31,14 @@ textarea { display: block; margin-top: 8px; padding: 13px 16px; resize: vertical
 .privacy { color: var(--quiet); font-size: 14px; margin: 6px 0 13px; }
 .form-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 23px; }
 .action, .option { border-radius: 8px; padding: 9px 17px; font-weight: 650; }
-.action { border: 1px solid #efb26a; background: var(--gold); color: #342008; }
-.action:hover { background: #f6ad55; }
+.action { border: 1px solid #7cc242; background: var(--lime); color: #07261a; }
+.action:hover { background: #95d450; }
 .text-button { background: transparent; border: 0; text-underline-offset: 4px; text-decoration: underline; color: var(--forest); padding: 8px 0; }
 :is(a,button,textarea):focus-visible { outline: 3px solid #2767a5; outline-offset: 3px; }
 #result { border-top: 3px solid #316d50; margin-top: 26px; padding: 16px 0 0; scroll-margin-top: 20px; }
 .caption { color: #346248; font-weight: 700; font-size: 14px; margin: 0 0 2px; }
+#result[data-course="pro"] { border-top-color: var(--pro); }
+#result[data-course="pro"] :is(.caption,.more) { color: var(--pro); }
 h2 { margin: 0; font-size: clamp(24px,3.6vw,38px); line-height: 1.15; letter-spacing: -.027em; }
 #lesson-note { margin: 8px 0 14px; }
 fieldset { border: 0; margin: 0; padding: 0; min-width: 0; }
@@ -76,7 +78,11 @@ aside p { color: var(--quiet); font-size: 15px; margin: 4px 0 0; }
         <label for="question" id="question-label">Сұрағыңыз</label>
         <textarea id="question" maxlength="400" rows="3" placeholder="Мысалы, шәкіртақымды бір айға қалай жеткіземін?" required aria-describedby="privacy"></textarea>
         <p class="privacy" id="privacy">Мәтін осы браузерде өңделеді. Аты-жөніңізді, карта нөмірін немесе құпия кодты енгізбеңіз.</p>
-        <div class="form-actions"><button class="action" type="submit" id="recommend">Жаттығу таңдау</button><button type="button" class="text-button" id="example">Мысал енгізу</button></div>
+        <div class="form-actions">
+          <button class="action" type="submit" id="recommend">Жаттығу таңдау</button>
+          <button type="button" class="text-button" id="example">Жеке қаржы мысалы</button>
+          <button type="button" class="text-button" id="example-pro">Кәсіби қаржы мысалы</button>
+        </div>
       </form>
       <section id="result" tabindex="-1" hidden aria-labelledby="result-title">
         <p class="caption" id="result-label"></p><h2 id="result-title"></h2><p id="lesson-note"></p>
@@ -86,13 +92,65 @@ aside p { color: var(--quiet); font-size: 15px; margin: 4px 0 0; }
         </fieldset>
         <a class="more" id="full-lesson" hidden></a>
       </section>
-      <aside id="scope"><h2 id="scope-title">Модель қандай тақырыптарды таниды?</h2><p id="scope-text">Бюджет, жинақ, несие және қаржылық алаяқтық. Нәтиже оқу тақырыбын таңдауға арналған.</p></aside>
+      <aside id="scope"><h2 id="scope-title">Қандай сұрақ қоюға болады?</h2><p id="scope-text">Бюджет, жинақ, несие немесе алаяқтық туралы сұраңыз. Кәсіби бағытта компанияның қаржылық есептілігі мен инвестициялық жобаларды бағалау тақырыптары бар.</p></aside>
     </div>
   </main>
   <noscript>ЖИ жұмыс істеуі үшін JavaScript қосыңыз. Для работы модели включите JavaScript.</noscript>
   <script>(() => {
   // public/js/guide-training.js
   var training = {
+    reporting: {
+      kk: [
+        "Компанияның қаржылық есептілігін оқу",
+        "Баланс активтер міндеттемелер және меншікті капитал",
+        "Ақша ағындары туралы есепті талдау",
+        "Пайда мен залал туралы есеп неден тұрады",
+        "Кәсіпорынның таза пайдасы мен шоттағы ақшаның айырмасы",
+        "Дебиторлық берешек баланста қайда жазылады",
+        "Фирманың түсімі мен шығындарын тоқсандық есептен көру",
+        "Клиент қарызға алса пайда мен ақша қалай өзгереді",
+        "Есепті күндегі баланс нені көрсетеді",
+        "Компанияның мүлкі және оның қарызы есептілікте қалай көрінеді"
+      ],
+      ru: [
+        "Как читать финансовую отчётность предприятия",
+        "Активы и обязательства в бухгалтерском балансе",
+        "Разбор отчёта о движении денежных средств",
+        "Что входит в отчёт о прибылях и убытках",
+        "Чем прибыль фирмы отличается от денег на счёте",
+        "Как отразить дебиторскую задолженность в балансе",
+        "Как найти выручку и расходы в отчёте компании",
+        "Клиент взял товар в долг как это отразится в отчётности",
+        "Что показывает баланс на конец квартала",
+        "В каком отчёте указаны имущество и долги предприятия"
+      ]
+    },
+    projects: {
+      kk: [
+        "Инвестициялық жобаны бағалауды үйрену",
+        "NPV жобаның таза келтірілген құны",
+        "Болашақ ақша ағындарын қалай дисконттайды",
+        "Кәсіпорынға арналған екі жобаны салыстыру",
+        "Инвестицияның өтелу мерзімін есептеу",
+        "Дисконттау мөлшерлемесін жобаны бағалауға қолдану",
+        "Жаңа өндіріс желісіне салынған қаражат қашан қайтады",
+        "Жобаның IRR көрсеткіші деген не",
+        "Жыл соңындағы төлемнің бүгінгі құнын табу",
+        "Жаңа цехтың табыстылығы бастапқы салымды ақтай ма"
+      ],
+      ru: [
+        "Как оценить инвестиционный проект",
+        "Чистая приведённая стоимость проекта NPV",
+        "Дисконтирование будущих денежных потоков",
+        "Сравнить два проекта расширения бизнеса",
+        "Рассчитать срок окупаемости инвестиций",
+        "Как учитывать ставку дисконтирования в оценке проекта",
+        "Когда вернутся вложения в новую производственную линию",
+        "Что такое внутренняя норма доходности IRR",
+        "Найти сегодняшнюю стоимость платежа следующего года",
+        "Оправдает ли доходность цеха первоначальные инвестиции"
+      ]
+    },
     budget: {
       kk: [
         "Шәкіртақым ай соңына жетпейді",
@@ -201,6 +259,7 @@ aside p { color: var(--quiet); font-size: 15px; margin: 4px 0 0; }
 
   // public/js/guide-model.js
   var maxLength = 400;
+  var stopWords = new Set("в во и на за по из к от у с со о об или а но ли же бы до при для это этом эти как что какой какая какие чем почему сколько когда где можно нужно хочу мне меня если чтобы есть будет через мен пен бен және не немесе да де та те ма ме ба бе па пе ол бұл осы сол бір үшін қалай қандай қанша неше қашан қай қайда неге неден деген болады керек келеді егер тұрады неде нені білдіреді значит означает состоит".split(" "));
   function features(text) {
     const words = text.normalize("NFKC").toLowerCase().replace(/ё/g, "е").match(/\p{L}+/gu) || [];
     const terms = /* @__PURE__ */ new Map();
@@ -208,7 +267,7 @@ aside p { color: var(--quiet); font-size: 15px; margin: 4px 0 0; }
       terms.set(term, (terms.get(term) || 0) + 1);
     }
     for (const word of words) {
-      if (word.length < 2) continue;
+      if (word.length < 2 || stopWords.has(word)) continue;
       count("w:" + word);
       const padded = "^" + word + "$";
       for (const size of [3, 4, 5]) {
@@ -222,12 +281,26 @@ aside p { color: var(--quiet); font-size: 15px; margin: 4px 0 0; }
     for (const [key, value] of vector) vector.set(key, value / length);
     return vector;
   }
+  function similarity(query, weights) {
+    let score = 0;
+    for (const [term, value] of query) score += value * (weights.get(term) || 0);
+    return score;
+  }
   function trainGuide(corpus = training) {
     const documents = [];
     const frequencies = /* @__PURE__ */ new Map();
+    const abbreviations = /* @__PURE__ */ new Map();
     for (const [topic, languages] of Object.entries(corpus)) {
       for (const [lang2, questions] of Object.entries(languages)) {
         for (const text of questions) {
+          for (const word of new Set(text.match(/\p{L}+/gu) || [])) {
+            if (!/^\p{Lu}{3,}$/u.test(word)) continue;
+            const key = word.toLowerCase();
+            if (!abbreviations.has(key)) abbreviations.set(key, { topic, count: 0 });
+            const entry = abbreviations.get(key);
+            entry.count++;
+            if (topic !== entry.topic) entry.topic = null;
+          }
           const terms = features(text);
           documents.push({ topic, lang: lang2, terms });
           for (const term of terms.keys()) frequencies.set(term, (frequencies.get(term) || 0) + 1);
@@ -246,20 +319,27 @@ aside p { color: var(--quiet); font-size: 15px; margin: 4px 0 0; }
     const centers = /* @__PURE__ */ new Map();
     for (const { topic, lang: lang2, terms } of documents) {
       const key = topic + "/" + lang2;
-      if (!centers.has(key)) centers.set(key, { topic, weights: /* @__PURE__ */ new Map() });
-      const { weights } = centers.get(key);
-      for (const [term, value] of vectorize(terms)) weights.set(term, (weights.get(term) || 0) + value);
+      if (!centers.has(key)) centers.set(key, { topic, weights: /* @__PURE__ */ new Map(), examples: [] });
+      const { weights, examples } = centers.get(key);
+      const example = vectorize(terms);
+      examples.push(example);
+      for (const [term, value] of example) weights.set(term, (weights.get(term) || 0) + value);
     }
     for (const { weights } of centers.values()) unit(weights);
     return function recommend(text) {
       if (typeof text !== "string" || !text.trim() || text.length > maxLength) return null;
+      const acronymTopics = /* @__PURE__ */ new Set();
+      for (const word of text.normalize("NFKC").toLowerCase().match(/\p{L}+/gu) || []) {
+        const entry = abbreviations.get(word);
+        if (entry?.topic && entry.count >= 2) acronymTopics.add(entry.topic);
+      }
       const terms = features(text);
       const query = vectorize(terms);
       if (query.size < 5 || query.size / terms.size < 0.17) return null;
       const scores = /* @__PURE__ */ new Map();
-      for (const { topic, weights } of centers.values()) {
-        let score = 0;
-        for (const [term, value] of query) score += value * (weights.get(term) || 0);
+      for (const { topic, weights, examples } of centers.values()) {
+        const closest = Math.max(...examples.map((example) => similarity(query, example)));
+        const score = 0.6 * similarity(query, weights) + 0.4 * closest + (acronymTopics.has(topic) ? 0.2 : 0);
         scores.set(topic, Math.max(scores.get(topic) || 0, score));
       }
       const [best, second] = [...scores].sort((a, b) => b[1] - a[1]);
@@ -271,6 +351,7 @@ aside p { color: var(--quiet); font-size: 15px; margin: 4px 0 0; }
   // public/js/guide-lessons.js
   var lessons = {
     budget: {
+      course: "life",
       slug: "tabys-shygys",
       kk: {
         title: "Айлық бюджетті жоспарлау",
@@ -278,6 +359,7 @@ aside p { color: var(--quiet); font-size: 15px; margin: 4px 0 0; }
         question: "Айдан қалған 48 000 теңгенің 12 000 теңгесі жолақыға кетеді. Үш аптаға бірдей бөлгенде басқа шығындарға аптасына қанша қалады?",
         choices: ["16 000 ₸", "12 000 ₸", "36 000 ₸"],
         answer: 1,
+        hints: { 0: "48 000 теңгені үшке бөлгенде жолақыға ақша қалмайды. Алдымен жолақыны бөлек қойыңыз.", 2: "36 000 теңге үш аптаға жетуі керек. Бір аптаға қанша келеді?" },
         why: "48 000 − 12 000 = 36 000 теңге. Оны үш аптаға бөлсеңіз, аптасына 12 000 теңге қалады."
       },
       ru: {
@@ -286,10 +368,12 @@ aside p { color: var(--quiet); font-size: 15px; margin: 4px 0 0; }
         question: "На остаток месяца есть 48 000 тенге. На проезд нужно 12 000. Сколько в неделю останется на другие расходы, если впереди три недели?",
         choices: ["16 000 ₸", "12 000 ₸", "36 000 ₸"],
         answer: 1,
+        hints: { 0: "Если разделить все 48 000 на три, на проезд ничего не останется. Сначала отложите деньги на дорогу.", 2: "36 000 хватит на весь оставшийся период. Какая часть приходится на одну неделю?" },
         why: "48 000 − 12 000 = 36 000 тенге. Делим на три недели и получаем по 12 000 тенге."
       }
     },
     savings: {
+      course: "life",
       slug: "zhinaq",
       kk: {
         title: "Мақсатқа ақша жинау",
@@ -297,6 +381,7 @@ aside p { color: var(--quiet); font-size: 15px; margin: 4px 0 0; }
         question: "Ноутбукке 180 000 теңге керек. 60 000 теңге жиналды. Пайызды есепке алмай, қалған соманы алты айда жинау үшін айына қанша салу қажет?",
         choices: ["30 000 ₸", "10 000 ₸", "20 000 ₸"],
         answer: 2,
+        hints: { 0: "30 000 теңгеден салсаңыз, ноутбуктің толық бағасын қайта жинайсыз. Қолда бар 60 000 теңгені ескеріңіз.", 1: "Айына 10 000 теңгеден алты айда тағы 60 000 теңге жиналады. Сонда ноутбукке ақша жете ме?" },
         why: "180 000 − 60 000 = 120 000 теңге. Алты ай бойы айына 20 000 теңгеден жинасаңыз, осы сома шығады."
       },
       ru: {
@@ -305,10 +390,12 @@ aside p { color: var(--quiet); font-size: 15px; margin: 4px 0 0; }
         question: "Ноутбук стоит 180 000 тенге, уже накоплено 60 000. Если не учитывать проценты, сколько нужно откладывать каждый месяц в течение полугода?",
         choices: ["30 000 ₸", "10 000 ₸", "20 000 ₸"],
         answer: 2,
+        hints: { 0: "По 30 000 в месяц вы соберёте всю цену ноутбука заново. Учтите сумму, которая уже есть.", 1: "За полгода по 10 000 прибавится ещё 60 000. Хватит ли денег вместе с накопленной суммой?" },
         why: "180 000 − 60 000 = 120 000 тенге. За шесть месяцев эту сумму можно собрать, откладывая по 20 000 тенге."
       }
     },
     credit: {
+      course: "life",
       slug: "nesie",
       kk: {
         title: "Қарыздың толық құны",
@@ -316,6 +403,7 @@ aside p { color: var(--quiet); font-size: 15px; margin: 4px 0 0; }
         question: "Студент 100 000 теңге алды. Ол 10 500 теңгеден он рет төлейді, одан бөлек комиссиясы 2 000 теңге. Барлық артық төлем қанша?",
         choices: ["7 000 ₸", "5 000 ₸", "2 000 ₸"],
         answer: 0,
+        hints: { 1: "5 000 теңге тек бөліп төлегендегі айырманы көрсетеді. Бөлек төленетін комиссияны қосыңыз.", 2: "2 000 теңге тек комиссияны жабады. Он төлемнің қосындысын алынған қарызбен салыстырыңыз." },
         why: "10 × 10 500 + 2 000 = 107 000 теңге. Бастапқы 100 000 теңгені шегергенде 7 000 теңге артық төлем шығады."
       },
       ru: {
@@ -324,10 +412,12 @@ aside p { color: var(--quiet); font-size: 15px; margin: 4px 0 0; }
         question: "Студент получил 100 000 тенге. Он внесёт десять платежей по 10 500 тенге и отдельно заплатит комиссию 2 000. Сколько составит переплата?",
         choices: ["7 000 ₸", "5 000 ₸", "2 000 ₸"],
         answer: 0,
+        hints: { 1: "5 000 учитывают только разницу по десяти платежам. Добавьте отдельную комиссию.", 2: "2 000 покрывают только комиссию. Сравните ещё и сумму десяти платежей с полученным займом." },
         why: "10 × 10 500 + 2 000 = 107 000 тенге. Вычитаем полученные 100 000 и получаем переплату 7 000 тенге."
       }
     },
     fraud: {
+      course: "life",
       slug: "qauipsizdik",
       kk: {
         title: "Күмәнді хабарламаны тану",
@@ -335,6 +425,7 @@ aside p { color: var(--quiet); font-size: 15px; margin: 4px 0 0; }
         question: "Өзін банк қызметкері деп таныстырған адам бір реттік код сұрады. Оқу мысалындағы қауіпсіз әрекетті таңдаңыз.",
         choices: ["Кодтың жартысын айту", "Қоңырауды аяқтап, банкке ресми арна арқылы хабарласу", "Ол жіберген сілтемені ашу"],
         answer: 1,
+        hints: { 0: "Кодтың бір бөлігін айту да құпия мәліметті ашады. Банкке өзіңіз қалай хабарласа аласыз?", 2: "Сілтемені қоңырау шалушы таңдады. Өзіңіз бұрыннан қолданатын байланыс арнасын таңдаңыз." },
         why: "Бір реттік код операцияны растауы мүмкін. Қоңырауды аяқтап, банктің ресми қолданбасы арқылы өзіңіз байланысқа шығыңыз."
       },
       ru: {
@@ -343,7 +434,52 @@ aside p { color: var(--quiet); font-size: 15px; margin: 4px 0 0; }
         question: "Звонящий представился сотрудником банка и просит одноразовый код. Какое действие в этом примере безопасно?",
         choices: ["Назвать половину кода", "Завершить звонок и связаться с банком через официальный канал", "Открыть ссылку от звонящего"],
         answer: 1,
+        hints: { 0: "Даже часть кода раскрывает секретные данные. Как вы можете сами связаться с банком?", 2: "Ссылку выбрал сам звонящий. Подумайте, какой канал связи вы можете открыть самостоятельно." },
         why: "Одноразовый код может подтверждать операцию. Завершите звонок и самостоятельно откройте официальное приложение банка."
+      }
+    },
+    reporting: {
+      course: "pro",
+      slug: "eseptilik",
+      kk: {
+        title: "Сатудан түскен түсім мен нақты ақша",
+        note: "Есептеу әдісінде компания тауарды сатып алушыға өткізгенде түсімді таниды. Ал ақша қозғалысы төлем түскен күні тіркеледі.",
+        question: "Дүкен наурызда тауарды 80 000 теңгеге сатты. Клиент 30 000 теңгені бірден төлеп, қалғанын сәуірде берді. Наурызда осы сатудан нақты қанша ақша түсті?",
+        choices: ["80 000 ₸", "50 000 ₸", "30 000 ₸"],
+        answer: 2,
+        hints: { 0: "Бұл сатылған тауардың толық бағасы. Наурызда клиент оның қандай бөлігін төледі?", 1: "50 000 теңге — клиенттің наурыз соңындағы берешегі. Осы соманы сату бағасынан шегеріңіз." },
+        why: "Наурызда түсім 80 000 теңге болды, ал нақты түскен ақша 30 000 теңге болды. Қалған 50 000 теңге наурыз соңындағы баланста дебиторлық берешек ретінде көрсетіледі."
+      },
+      ru: {
+        title: "Почему выручка и деньги на счёте различаются",
+        note: "При учёте по начислению компания признаёт выручку, когда передаёт товар покупателю. Поступление денег отражается в день оплаты.",
+        question: "В марте магазин продал товар за 80 000 тенге. Покупатель сразу заплатил 30 000, остальное перевёл в апреле. Сколько денег реально поступило по этой продаже в марте?",
+        choices: ["80 000 ₸", "50 000 ₸", "30 000 ₸"],
+        answer: 2,
+        hints: { 0: "Это полная выручка от продажи. Какую её часть покупатель успел оплатить в марте?", 1: "50 000 — долг покупателя на конец марта. Вычтите долг из цены продажи." },
+        why: "В марте выручка составила 80 000 тенге, а поступление денег — 30 000. Оставшиеся 50 000 на конец марта отражаются в балансе как дебиторская задолженность."
+      }
+    },
+    projects: {
+      course: "pro",
+      slug: "zhobalar",
+      kk: {
+        title: "Жоба қанша құн жасайды?",
+        note: "Бір жылдан кейінгі таза ақша түсімін бүгінгі құнға келтіру үшін оны 1 + дисконттау мөлшерлемесіне бөліңіз. Осы құннан бастапқы салымды шегерсеңіз, NPV шығады.",
+        question: "Шеберхана бүгін 100 000 теңге салып, тура бір жылдан соң 121 000 теңге алады. Өзге төлем жоқ. Жылдық дисконттау мөлшерлемесі 10% болса, жобаның NPV көрсеткіші қандай?",
+        choices: ["10 000 ₸", "21 000 ₸", "110 000 ₸"],
+        answer: 0,
+        hints: { 1: "21 000 теңге — екі соманың тікелей айырмасы. Алдымен келесі жылғы түсімді 1,10-ға бөліңіз.", 2: "110 000 теңге — болашақ түсімнің бүгінгі құны. Жобаны бастау үшін бүгін қанша жұмсалады?" },
+        why: "121 000 ÷ 1,10 = 110 000 теңге. Бастапқы 100 000 теңгені шегергенде, жоба бүгінгі құнмен 10 000 теңге қосады."
+      },
+      ru: {
+        title: "Сколько стоимости создаёт проект?",
+        note: "Разделите чистое поступление через год на единицу плюс ставку дисконтирования. Вычтите первоначальное вложение из полученной стоимости. Разница — чистая приведённая стоимость, или NPV.",
+        question: "Мастерская вкладывает сегодня 100 000 тенге и получит 121 000 ровно через год. Других платежей нет. Чему равна NPV проекта при ставке дисконтирования 10% годовых?",
+        choices: ["10 000 ₸", "21 000 ₸", "110 000 ₸"],
+        answer: 0,
+        hints: { 1: "21 000 — разница между суммами в разные даты. Сначала разделите поступление следующего года на 1,10.", 2: "110 000 — сегодняшняя стоимость будущего поступления. Сколько мастерская должна потратить сегодня, чтобы его получить?" },
+        why: "121 000 ÷ 1,10 = 110 000 тенге. После вычета первоначальных 100 000 проект добавляет 10 000 тенге в сегодняшних деньгах."
       }
     }
   };
@@ -357,17 +493,20 @@ aside p { color: var(--quiet); font-size: 15px; margin: 4px 0 0; }
       placeholder: "Мысалы, шәкіртақымды бір айға қалай жеткіземін?",
       privacy: "Мәтін осы браузерде өңделеді. Аты-жөніңізді, карта нөмірін немесе құпия кодты енгізбеңіз.",
       submit: "Жаттығу таңдау",
-      example: "Мысал енгізу",
+      example: "Жеке қаржы мысалы",
+      proExample: "Кәсіби қаржы мысалы",
       sample: "Алдағы алты айда ноутбукке ақша жинағым келеді.",
-      result: "ЖИ таңдаған сабақ",
+      proSample: "Компанияның пайдасы мен шоттағы ақшасының айырмасы қандай?",
+      life: "Өмірге қажетті қаржы",
+      pro: "Кәсіби қаржы",
       review: "ЖИ жауабы",
       unknown: "Сұрақты нақтылай аласыз ба?",
-      retry: "Бір ғана жағдайды сипаттаңыз. Модель бюджет, жинақ, несие және алаяқтық тақырыптарын ажыратады.",
+      retry: "Төмендегі тақырыптардың біріне қатысты жағдайды сипаттаңыз немесе дайын мысалды таңдаңыз.",
       correct: "Дұрыс.",
       incorrect: "Тағы бір рет байқап көріңіз.",
       full: "Платформадағы толық сабақты оқу",
-      scope: "Модель қандай тақырыптарды таниды?",
-      topics: "Бюджет, жинақ, несие және қаржылық алаяқтық. Нәтиже оқу тақырыбын таңдауға арналған.",
+      scope: "Қандай сұрақ қоюға болады?",
+      topics: "Бюджет, жинақ, несие немесе алаяқтық туралы сұраңыз. Кәсіби бағытта компанияның қаржылық есептілігі мен инвестициялық жобаларды бағалау тақырыптары бар.",
       home: "QARZHЫ платформасы",
       blank: "Сұрағыңызды жазыңыз."
     },
@@ -378,17 +517,20 @@ aside p { color: var(--quiet); font-size: 15px; margin: 4px 0 0; }
       placeholder: "Например, как распределить стипендию на месяц?",
       privacy: "Текст обрабатывается в этом браузере. Оставьте при себе имя, номер карты и секретные коды.",
       submit: "Подобрать упражнение",
-      example: "Вставить пример",
+      example: "Пример о личных финансах",
+      proExample: "Пример о финансах бизнеса",
       sample: "Хочу накопить на ноутбук за ближайшие полгода.",
-      result: "Урок подобрал ИИ",
+      proSample: "Почему прибыль компании отличается от денег на счёте?",
+      life: "Финансы для жизни",
+      pro: "Профессиональные финансы",
       review: "Ответ ИИ",
       unknown: "Можете уточнить вопрос?",
-      retry: "Опишите одну ситуацию. Модель различает бюджет, накопления, кредит и финансовое мошенничество.",
+      retry: "Опишите ситуацию по одной из тем ниже или выберите готовый пример.",
       correct: "Верно.",
       incorrect: "Попробуйте ещё раз.",
       full: "Открыть полный урок на платформе",
-      scope: "Какие темы распознаёт модель?",
-      topics: "Бюджет, накопления, кредиты и финансовое мошенничество. Рекомендация помогает выбрать учебную тему.",
+      scope: "О чём можно спросить?",
+      topics: "Задайте вопрос о бюджете, накоплениях, кредите или мошенничестве. В профессиональном направлении доступны финансовая отчётность компании и оценка инвестиционных проектов.",
       home: "Платформа QARZHЫ",
       blank: "Введите свой вопрос."
     }
@@ -415,15 +557,17 @@ aside p { color: var(--quiet); font-size: 15px; margin: 4px 0 0; }
     const feedback = get("feedback");
     feedback.hidden = false;
     feedback.dataset.correct = String(correct);
-    feedback.textContent = correct ? copy[lang].correct + " " + item.why : copy[lang].incorrect + " " + item.note;
+    feedback.textContent = correct ? copy[lang].correct + " " + item.why : item.hints[option] + " " + copy[lang].incorrect;
     for (const [index, button] of [...get("answers").children].entries()) button.setAttribute("aria-pressed", String(index === option));
   }
   function displayResult() {
     get("result").hidden = !attempted;
     if (!attempted) return;
     const ui = copy[lang];
-    const item = lessons[currentTopic]?.[lang];
-    get("result-label").textContent = item ? ui.result : ui.review;
+    const lesson = lessons[currentTopic];
+    const item = lesson?.[lang];
+    get("result").dataset.course = lesson?.course || "";
+    get("result-label").textContent = lesson ? ui[lesson.course] : ui.review;
     get("result-title").textContent = item?.title || ui.unknown;
     get("lesson-note").textContent = item?.note || ui.retry;
     get("practice").hidden = !item;
@@ -444,7 +588,7 @@ aside p { color: var(--quiet); font-size: 15px; margin: 4px 0 0; }
       };
       get("answers").append(button);
     });
-    get("full-lesson").href = "/topic?c=life&t=" + lessons[currentTopic].slug + "&lang=" + lang;
+    get("full-lesson").href = "/topic?" + new URLSearchParams({ c: lesson.course, t: lesson.slug, lang });
     get("full-lesson").textContent = ui.full;
     if (selected !== null) displayFeedback(selected);
   }
@@ -452,7 +596,7 @@ aside p { color: var(--quiet); font-size: 15px; margin: 4px 0 0; }
     const ui = copy[lang];
     document.documentElement.lang = lang;
     document.title = "QARZHЫ Guide · " + ui.question;
-    for (const [id, key] of Object.entries({ heading: "heading", "intro-text": "intro", "question-label": "question", privacy: "privacy", recommend: "submit", example: "example", "scope-title": "scope", "scope-text": "topics" })) get(id).textContent = ui[key];
+    for (const [id, key] of Object.entries({ heading: "heading", "intro-text": "intro", "question-label": "question", privacy: "privacy", recommend: "submit", example: "example", "example-pro": "proExample", "scope-title": "scope", "scope-text": "topics" })) get(id).textContent = ui[key];
     get("brand").href = fileMode ? "#" : "/?lang=" + lang;
     get("brand").setAttribute("aria-label", fileMode ? "QARZHЫ Guide" : ui.home);
     question.placeholder = ui.placeholder;
@@ -480,11 +624,13 @@ aside p { color: var(--quiet); font-size: 15px; margin: 4px 0 0; }
     get("result").hidden = true;
   }
   question.addEventListener("input", clearResult);
-  get("example").onclick = () => {
-    clearResult();
-    question.value = copy[lang].sample;
-    question.focus();
-  };
+  for (const [id, key] of [["example", "sample"], ["example-pro", "proSample"]]) {
+    get(id).onclick = () => {
+      clearResult();
+      question.value = copy[lang][key];
+      question.focus();
+    };
+  }
   get("question-form").onsubmit = (event) => {
     event.preventDefault();
     if (!question.value.trim()) {

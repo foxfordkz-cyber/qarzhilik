@@ -8,7 +8,9 @@ button { touch-action:manipulation; }
 .shell { max-width:1110px; padding:0 32px; margin:auto; }
 .top { background:var(--ink); color:white; }
 .top-inner { display:flex; justify-content:space-between; align-items:center; min-height:62px; }
-.wordmark { color:white; font-size:25px; letter-spacing:-1.2px; font-weight:800; text-decoration:none; }
+.wordmark { display:inline-flex; align-items:center; gap:12px; color:white; font-size:25px; letter-spacing:-1.2px; font-weight:800; text-decoration:none; }
+#portal-back { padding-right:12px; border-right:1px solid #709382; font-size:14px; letter-spacing:0; font-weight:500; }
+.wordmark:hover #portal-back { text-decoration:underline; }
 .lang { display:flex; gap:2px; padding:3px; border:1px solid #709382; border-radius:30px; }
 .lang button { border:0; border-radius:20px; background:none; color:#fff; font-size:13px; font-weight:700; padding:4px 12px; }
 .lang button[aria-pressed="true"] { color:var(--ink); background:#d8e9ce; }
