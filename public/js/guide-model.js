@@ -1,24 +1,27 @@
 import { training } from './guide-training.js';
 
-export const version = 'QARZHY Guide 1.1';
+export const version = 'QARZHY Guide 1.1.1';
 export const maxLength = 400;
 
 // Grammatical words add little evidence for a specific topic. Filter before
 // building character n-grams so question phrasing cannot dominate short inputs.
 const stopWords = new Set((
   'в во и на за по из к от у с со о об или а но ли же бы до при для это этом эти как что какой какая какие чем почему ' +
-  'сколько когда где можно нужно хочу мне меня если чтобы есть будет через ' +
+  'сколько когда где можно нужно хочу мне меня если чтобы есть будет через сегодня завтра вчера сейчас теперь ' +
   'мен пен бен және не немесе да де та те ма ме ба бе па пе ол бұл осы сол бір үшін қалай қандай қанша ' +
-  'неше қашан қай қайда неге неден деген болады керек келеді егер тұрады неде нені білдіреді ' +
+  'неше қашан қай қайда неге неден деген болады керек келеді егер тұрады неде нені білдіреді бүгін ертең кеше қазір ' +
   'значит означает состоит'
 ).split(' '));
+// Relative dates qualify questions in any domain. Ignore inflected adjectives
+// too, e.g. «сегодняшнюю стоимость» and «бүгінгі құнын» still carry the noun.
+const relativeDateAdjective = /^(?:сегодняшн|вчерашн|завтрашн|нынешн|бүгінгі|ертеңгі|кешегі|қазіргі)/u;
 
 function features(text) {
   const words = text.normalize('NFKC').toLowerCase().replace(/ё/g, 'е').match(/\p{L}+/gu) || [];
   const terms = new Map();
   function count(term) { terms.set(term, (terms.get(term) || 0) + 1); }
   for (const word of words) {
-    if (word.length < 2 || stopWords.has(word)) continue;
+    if (word.length < 2 || stopWords.has(word) || relativeDateAdjective.test(word)) continue;
     count('w:' + word);
     const padded = '^' + word + '$';
     for (const size of [3, 4, 5]) {

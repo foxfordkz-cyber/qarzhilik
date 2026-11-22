@@ -17,6 +17,14 @@ test('the recommender accepts questions in either language and can abstain', () 
   for (const question of ['', null, '!!!', '🪐', 'я'.repeat(maxLength + 1)]) assert.equal(predict(question), null);
 });
 
+test('relative dates alone do not make an unrelated question financial', () => {
+  for (const question of ['Какая сегодня погода?', 'Сегодняшняя погода', 'Бүгін ауа райы қандай?', 'Бүгінгі ауа райы қандай?']) {
+    assert.equal(predict(question), null);
+  }
+  assert.equal(predict('Сегодня какая ставка по кредиту?'), 'credit');
+  assert.equal(predict('Бүгін несие бойынша артық төлемді қалай есептеймін?'), 'credit');
+});
+
 test('every recommendation has a real bilingual lesson and a distinct hint for each mistake', () => {
   assert.deepEqual(Object.keys(training).sort(), Object.keys(lessons).sort());
   for (const lang of ['kk', 'ru']) {
