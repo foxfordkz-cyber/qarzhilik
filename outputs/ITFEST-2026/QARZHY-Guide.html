@@ -1,0 +1,506 @@
+<!doctype html>
+<html lang="kk">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#103e32">
+  <title>QARZHЫ Guide</title>
+  <style>:root { color-scheme: light; --forest: #103e32; --ink: #173b30; --line: #c8d5c9; --paper: #faf9f4; --quiet: #495e55; --gold: #f7bf72; }
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+body { margin: 0; background: var(--paper); color: var(--ink); font: 17px/1.55 Inter, "Segoe UI", Arial, sans-serif; }
+button, textarea { font: inherit; }
+button, a { touch-action: manipulation; }
+button { cursor: pointer; }
+.bar { background: #fff; border-bottom: 1px solid var(--line); }
+.bar-inner, .intro-inner, .workspace { max-width: 1000px; margin: 0 auto; padding-left: 34px; padding-right: 34px; }
+.bar-inner { display: flex; align-items: center; justify-content: space-between; min-height: 65px; }
+.brand { font-size: 24px; font-weight: 800; text-decoration: none; color: var(--forest); letter-spacing: -.8px; }
+.brand span { margin-left: 4px; font-size: 17px; color: var(--quiet); font-weight: 500; letter-spacing: 0; }
+.language { display: flex; gap: 3px; padding: 3px; background: #edf1ea; border-radius: 24px; }
+.language button { background: transparent; border: 0; color: var(--forest); padding: 5px 11px; font-size: 13px; font-weight: 700; border-radius: 24px; }
+.language button[aria-pressed="true"] { background: var(--forest); color: #fff; }
+.intro { background: var(--forest); color: #fff; }
+.intro-inner { padding-top: 30px; padding-bottom: 29px; }
+h1 { margin: 0 0 10px; max-width: 900px; font-size: clamp(32px,4.8vw,56px); line-height: 1.08; letter-spacing: -.035em; }
+.intro p { max-width: 730px; color: #dfeddf; margin: 0; font-size: 18px; }
+.workspace { padding-top: 28px; padding-bottom: 54px; }
+form, #result { max-width: 790px; }
+label, legend { font-weight: 650; }
+textarea { display: block; margin-top: 8px; padding: 13px 16px; resize: vertical; min-height: 86px; width: 100%; border-radius: 10px; border: 1px solid #829b89; background: white; color: var(--ink); line-height: 1.45; }
+.privacy { color: var(--quiet); font-size: 14px; margin: 6px 0 13px; }
+.form-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 23px; }
+.action, .option { border-radius: 8px; padding: 9px 17px; font-weight: 650; }
+.action { border: 1px solid #efb26a; background: var(--gold); color: #342008; }
+.action:hover { background: #f6ad55; }
+.text-button { background: transparent; border: 0; text-underline-offset: 4px; text-decoration: underline; color: var(--forest); padding: 8px 0; }
+:is(a,button,textarea):focus-visible { outline: 3px solid #2767a5; outline-offset: 3px; }
+#result { border-top: 3px solid #316d50; margin-top: 26px; padding: 16px 0 0; scroll-margin-top: 20px; }
+.caption { color: #346248; font-weight: 700; font-size: 14px; margin: 0 0 2px; }
+h2 { margin: 0; font-size: clamp(24px,3.6vw,38px); line-height: 1.15; letter-spacing: -.027em; }
+#lesson-note { margin: 8px 0 14px; }
+fieldset { border: 0; margin: 0; padding: 0; min-width: 0; }
+legend { padding: 0; }
+#answers { display: flex; flex-wrap: wrap; gap: 8px; margin: 10px 0; }
+.option { background: white; border: 1px solid #91aa99; color: var(--ink); text-align: left; }
+.option:hover, .option[aria-pressed="true"] { background: #e1eee2; border-color: #315f49; }
+#feedback { margin: 9px 0; background: #e4efe5; border-left: 3px solid #387354; padding: 9px 13px; }
+#feedback[data-correct="false"] { background: #fbecd7; border-color: #a55b1c; }
+.more { color: var(--forest); text-underline-offset: 4px; display: inline-block; margin-top: 4px; }
+aside { margin-top: 27px; padding-top: 14px; border-top: 1px solid var(--line); max-width: 790px; }
+aside h2 { font-size: 16px; letter-spacing: 0; }
+aside p { color: var(--quiet); font-size: 15px; margin: 4px 0 0; }
+@media (max-width: 620px) {
+  .bar-inner, .intro-inner, .workspace { padding-left: 20px; padding-right: 20px; }
+  .bar-inner { min-height: 56px; }
+  .intro-inner { padding-top: 24px; padding-bottom: 23px; }
+  .intro p { font-size: 16px; }
+  .workspace { padding-top: 21px; }
+}
+</style>
+</head>
+<body>
+  <header class="bar"><div class="bar-inner">
+    <a href="/" class="brand" id="brand">QARZHЫ <span>Guide</span></a>
+    <div class="language" aria-label="Тіл / Язык"><button type="button" data-lang="kk" lang="kk" aria-pressed="true">ҚАЗ</button><button type="button" data-lang="ru" lang="ru" aria-pressed="false">РУС</button></div>
+  </div></header>
+  <main>
+    <section class="intro">
+      <div class="intro-inner">
+        <h1 id="heading">Қай қаржы сұрағын түсінгіңіз келеді?</h1>
+        <p id="intro-text">Жағдайды өз сөзіңізбен жазыңыз. ЖИ тақырыпты анықтап, қысқа сабақ пен жаттығу ұсынады.</p>
+      </div>
+    </section>
+    <div class="workspace">
+      <form id="question-form" autocomplete="off">
+        <label for="question" id="question-label">Сұрағыңыз</label>
+        <textarea id="question" maxlength="400" rows="3" placeholder="Мысалы, шәкіртақымды бір айға қалай жеткіземін?" required aria-describedby="privacy"></textarea>
+        <p class="privacy" id="privacy">Мәтін осы браузерде өңделеді. Аты-жөніңізді, карта нөмірін немесе құпия кодты енгізбеңіз.</p>
+        <div class="form-actions"><button class="action" type="submit" id="recommend">Жаттығу таңдау</button><button type="button" class="text-button" id="example">Мысал енгізу</button></div>
+      </form>
+      <section id="result" tabindex="-1" hidden aria-labelledby="result-title">
+        <p class="caption" id="result-label"></p><h2 id="result-title"></h2><p id="lesson-note"></p>
+        <fieldset id="practice" hidden>
+          <legend id="exercise"></legend><div id="answers"></div>
+          <p id="feedback" role="status" hidden></p>
+        </fieldset>
+        <a class="more" id="full-lesson" hidden></a>
+      </section>
+      <aside id="scope"><h2 id="scope-title">Модель қандай тақырыптарды таниды?</h2><p id="scope-text">Бюджет, жинақ, несие және қаржылық алаяқтық. Нәтиже оқу тақырыбын таңдауға арналған.</p></aside>
+    </div>
+  </main>
+  <noscript>ЖИ жұмыс істеуі үшін JavaScript қосыңыз. Для работы модели включите JavaScript.</noscript>
+  <script>(() => {
+  // public/js/guide-training.js
+  var training = {
+    budget: {
+      kk: [
+        "Шәкіртақым ай соңына жетпейді",
+        "Апталық шығындарымды қалай жоспарлаймын",
+        "Тамақ пен жолға кететін ақшаны бөлу",
+        "Кіріс пен шығыс есебін жүргізу",
+        "Отбасылық бюджет кестесін құрғым келеді",
+        "Ақшамның қайда жұмсалғанын білмеймін",
+        "Міндетті төлемдер мен қалауларымды қалай ажыратамын",
+        "Күнделікті ұсақ шығындарды жазу",
+        "Пәтерақыға азық-түлікке қанша қалдырамын",
+        "Жалақы түскенде айлық жоспар құру"
+      ],
+      ru: [
+        "Стипендии не хватает до конца месяца",
+        "Как спланировать траты на неделю",
+        "Хочу распределить деньги на еду и дорогу",
+        "Учёт доходов и расходов",
+        "Как составить семейный бюджет",
+        "Не понимаю куда уходит зарплата",
+        "Как отличить обязательные расходы от желаний",
+        "Записывать мелкие покупки каждый день",
+        "Сколько остаётся после аренды и продуктов",
+        "Как перестать тратить всё в начале месяца"
+      ]
+    },
+    savings: {
+      kk: [
+        "Ноутбук сатып алу үшін ақша жинағым келеді",
+        "Төтенше жағдайға қор жинау",
+        "Алты айда мақсатқа қанша жинаймын",
+        "Ақша жинауды неден бастау керек",
+        "Жинақ мақсатыма жету үшін ай сайын ақша салу",
+        "Депозит ашып қаражат жинау",
+        "Күтпеген шығынға резерв керек",
+        "Велосипедке айына қанша теңге жинасам болады",
+        "Қаржылық қауіпсіздік жастығын құру",
+        "Демалысқа қаражат жинап жүрмін"
+      ],
+      ru: [
+        "Хочу накопить на ноутбук",
+        "Как создать подушку безопасности",
+        "Откладывать каждый месяц на мечту",
+        "Собираю деньги на поездку к лету",
+        "За сколько месяцев я накоплю нужную сумму",
+        "Резерв на непредвиденные расходы",
+        "Как поставить цель для накоплений",
+        "Хочу пополнять депозит и копить",
+        "Сколько откладывать на новый велосипед",
+        "Сбережения на случай потери работы"
+      ]
+    },
+    credit: {
+      kk: [
+        "Несие бойынша артық төлемді қалай есептеймін",
+        "Бөліп төлеудің толық құны қандай",
+        "Қарыздың пайыздық мөлшерлемесін салыстыру",
+        "Банк несиесінің өтеу кестесі",
+        "Несие шартына комиссия қосылған",
+        "Ай сайынғы несие төлемі қалай шығады",
+        "Екі кредиттің жалпы төлемін салыстырғым келеді",
+        "ЖТСМ мен пайыздың айырмасы",
+        "Қарыз алсам қанша қайтарамын",
+        "Тауарды бөліп төлегенде қанша артық төлеймін"
+      ],
+      ru: [
+        "Как посчитать переплату по кредиту",
+        "Полная стоимость рассрочки",
+        "Сравнить проценты по двум займам",
+        "Хочу понять график погашения кредита",
+        "В договоре займа указана комиссия",
+        "Из чего складывается ежемесячный платёж по кредиту",
+        "Чем ГЭСВ отличается от номинальной ставки",
+        "Сколько верну банку за рассрочку",
+        "Общая сумма выплат по долгу",
+        "Как понять сколько процентов я заплачу кредитору"
+      ]
+    },
+    fraud: {
+      kk: [
+        "Бейтаныс адам SMS кодты сұрады",
+        "Банк атынан күмәнді сілтеме келді",
+        "Телефон алаяқтығын қалай танимын",
+        "Карта деректерін сұраған хабарлама",
+        "Жүлде ұттыңыз деп құпиясөз сұрайды",
+        "Жалған банк қызметкері қоңырау шалды",
+        "Фишинг сайтын қалай тексеруге болады",
+        "Бөгде адам бір реттік кодты айт дейді",
+        "Қауіпсіз шотқа ақша аударуды талап етті",
+        "Картаның артындағы үш санды сұрап тұр"
+      ],
+      ru: [
+        "Незнакомец просит код из СМС",
+        "Пришла подозрительная ссылка от имени банка",
+        "Как распознать телефонного мошенника",
+        "В сообщении спрашивают данные карты",
+        "Для получения приза просят пароль",
+        "Звонит якобы служба безопасности банка",
+        "Как проверить фишинговую ссылку",
+        "Требуют сообщить одноразовый код",
+        "Просят перевести деньги на безопасный счёт",
+        "Зачем звонящий спрашивает три цифры с карты"
+      ]
+    }
+  };
+
+  // public/js/guide-model.js
+  var maxLength = 400;
+  function features(text) {
+    const words = text.normalize("NFKC").toLowerCase().replace(/ё/g, "е").match(/\p{L}+/gu) || [];
+    const terms = /* @__PURE__ */ new Map();
+    function count(term) {
+      terms.set(term, (terms.get(term) || 0) + 1);
+    }
+    for (const word of words) {
+      if (word.length < 2) continue;
+      count("w:" + word);
+      const padded = "^" + word + "$";
+      for (const size of [3, 4, 5]) {
+        for (let i = 0; i <= padded.length - size; i++) count(padded.slice(i, i + size));
+      }
+    }
+    return terms;
+  }
+  function unit(vector) {
+    const length = Math.sqrt([...vector.values()].reduce((sum, v) => sum + v * v, 0)) || 1;
+    for (const [key, value] of vector) vector.set(key, value / length);
+    return vector;
+  }
+  function trainGuide(corpus = training) {
+    const documents = [];
+    const frequencies = /* @__PURE__ */ new Map();
+    for (const [topic, languages] of Object.entries(corpus)) {
+      for (const [lang2, questions] of Object.entries(languages)) {
+        for (const text of questions) {
+          const terms = features(text);
+          documents.push({ topic, lang: lang2, terms });
+          for (const term of terms.keys()) frequencies.set(term, (frequencies.get(term) || 0) + 1);
+        }
+      }
+    }
+    const idf = /* @__PURE__ */ new Map();
+    for (const [term, n] of frequencies) idf.set(term, 1 + Math.log((1 + documents.length) / (1 + n)));
+    function vectorize(terms) {
+      const vector = /* @__PURE__ */ new Map();
+      for (const [term, count] of terms) {
+        if (idf.has(term)) vector.set(term, (1 + Math.log(count)) * idf.get(term));
+      }
+      return unit(vector);
+    }
+    const centers = /* @__PURE__ */ new Map();
+    for (const { topic, lang: lang2, terms } of documents) {
+      const key = topic + "/" + lang2;
+      if (!centers.has(key)) centers.set(key, { topic, weights: /* @__PURE__ */ new Map() });
+      const { weights } = centers.get(key);
+      for (const [term, value] of vectorize(terms)) weights.set(term, (weights.get(term) || 0) + value);
+    }
+    for (const { weights } of centers.values()) unit(weights);
+    return function recommend(text) {
+      if (typeof text !== "string" || !text.trim() || text.length > maxLength) return null;
+      const terms = features(text);
+      const query = vectorize(terms);
+      if (query.size < 5 || query.size / terms.size < 0.17) return null;
+      const scores = /* @__PURE__ */ new Map();
+      for (const { topic, weights } of centers.values()) {
+        let score = 0;
+        for (const [term, value] of query) score += value * (weights.get(term) || 0);
+        scores.set(topic, Math.max(scores.get(topic) || 0, score));
+      }
+      const [best, second] = [...scores].sort((a, b) => b[1] - a[1]);
+      if (!best || best[1] < 0.19 || best[1] - (second?.[1] || 0) < 0.045) return null;
+      return best[0];
+    };
+  }
+
+  // public/js/guide-lessons.js
+  var lessons = {
+    budget: {
+      slug: "tabys-shygys",
+      kk: {
+        title: "Айлық бюджетті жоспарлау",
+        note: "Алдымен қолдағы сомадан міндетті төлемдерді шегеріңіз. Қалған ақшаны келесі кіріс түскенге дейінгі уақытқа бөліңіз.",
+        question: "Айдан қалған 48 000 теңгенің 12 000 теңгесі жолақыға кетеді. Үш аптаға бірдей бөлгенде басқа шығындарға аптасына қанша қалады?",
+        choices: ["16 000 ₸", "12 000 ₸", "36 000 ₸"],
+        answer: 1,
+        why: "48 000 − 12 000 = 36 000 теңге. Оны үш аптаға бөлсеңіз, аптасына 12 000 теңге қалады."
+      },
+      ru: {
+        title: "Как распределить бюджет",
+        note: "Вычтите обязательные платежи из оставшихся денег. Затем разделите остаток на число недель до следующего поступления.",
+        question: "На остаток месяца есть 48 000 тенге. На проезд нужно 12 000. Сколько в неделю останется на другие расходы, если впереди три недели?",
+        choices: ["16 000 ₸", "12 000 ₸", "36 000 ₸"],
+        answer: 1,
+        why: "48 000 − 12 000 = 36 000 тенге. Делим на три недели и получаем по 12 000 тенге."
+      }
+    },
+    savings: {
+      slug: "zhinaq",
+      kk: {
+        title: "Мақсатқа ақша жинау",
+        note: "Мақсаттың бағасынан жиналған соманы шегеріңіз. Қалғанын мақсатқа дейінгі ай санына бөліңіз.",
+        question: "Ноутбукке 180 000 теңге керек. 60 000 теңге жиналды. Пайызды есепке алмай, қалған соманы алты айда жинау үшін айына қанша салу қажет?",
+        choices: ["30 000 ₸", "10 000 ₸", "20 000 ₸"],
+        answer: 2,
+        why: "180 000 − 60 000 = 120 000 теңге. Алты ай бойы айына 20 000 теңгеден жинасаңыз, осы сома шығады."
+      },
+      ru: {
+        title: "Как накопить на цель",
+        note: "Вычтите уже накопленные деньги из стоимости цели. Разделите остаток на количество месяцев до покупки.",
+        question: "Ноутбук стоит 180 000 тенге, уже накоплено 60 000. Если не учитывать проценты, сколько нужно откладывать каждый месяц в течение полугода?",
+        choices: ["30 000 ₸", "10 000 ₸", "20 000 ₸"],
+        answer: 2,
+        why: "180 000 − 60 000 = 120 000 тенге. За шесть месяцев эту сумму можно собрать, откладывая по 20 000 тенге."
+      }
+    },
+    credit: {
+      slug: "nesie",
+      kk: {
+        title: "Қарыздың толық құны",
+        note: "Оқу мысалында барлық төлем мен комиссияны қосып, алынған қарыз сомасымен салыстырыңыз.",
+        question: "Студент 100 000 теңге алды. Ол 10 500 теңгеден он рет төлейді, одан бөлек комиссиясы 2 000 теңге. Барлық артық төлем қанша?",
+        choices: ["7 000 ₸", "5 000 ₸", "2 000 ₸"],
+        answer: 0,
+        why: "10 × 10 500 + 2 000 = 107 000 теңге. Бастапқы 100 000 теңгені шегергенде 7 000 теңге артық төлем шығады."
+      },
+      ru: {
+        title: "Полная стоимость займа",
+        note: "В учебной задаче сложите все выплаты и комиссии, а затем сравните итог с суммой, полученной на руки.",
+        question: "Студент получил 100 000 тенге. Он внесёт десять платежей по 10 500 тенге и отдельно заплатит комиссию 2 000. Сколько составит переплата?",
+        choices: ["7 000 ₸", "5 000 ₸", "2 000 ₸"],
+        answer: 0,
+        why: "10 × 10 500 + 2 000 = 107 000 тенге. Вычитаем полученные 100 000 и получаем переплату 7 000 тенге."
+      }
+    },
+    fraud: {
+      slug: "qauipsizdik",
+      kk: {
+        title: "Күмәнді хабарламаны тану",
+        note: "Қоңырау шалушының кім екенін ол жіберген сілтеме арқылы тексермеңіз. Банкке өзіңіз ресми қолданбасы арқылы хабарласыңыз.",
+        question: "Өзін банк қызметкері деп таныстырған адам бір реттік код сұрады. Оқу мысалындағы қауіпсіз әрекетті таңдаңыз.",
+        choices: ["Кодтың жартысын айту", "Қоңырауды аяқтап, банкке ресми арна арқылы хабарласу", "Ол жіберген сілтемені ашу"],
+        answer: 1,
+        why: "Бір реттік код операцияны растауы мүмкін. Қоңырауды аяқтап, банктің ресми қолданбасы арқылы өзіңіз байланысқа шығыңыз."
+      },
+      ru: {
+        title: "Как распознать подозрительное сообщение",
+        note: "Для проверки звонка используйте контакт из официального приложения банка. Ссылку, присланную собеседником, может контролировать сам собеседник.",
+        question: "Звонящий представился сотрудником банка и просит одноразовый код. Какое действие в этом примере безопасно?",
+        choices: ["Назвать половину кода", "Завершить звонок и связаться с банком через официальный канал", "Открыть ссылку от звонящего"],
+        answer: 1,
+        why: "Одноразовый код может подтверждать операцию. Завершите звонок и самостоятельно откройте официальное приложение банка."
+      }
+    }
+  };
+
+  // public/js/guide.js
+  var copy = {
+    kk: {
+      heading: "Қай қаржы сұрағын түсінгіңіз келеді?",
+      intro: "Жағдайды өз сөзіңізбен жазыңыз. ЖИ тақырыпты анықтап, қысқа сабақ пен жаттығу ұсынады.",
+      question: "Сұрағыңыз",
+      placeholder: "Мысалы, шәкіртақымды бір айға қалай жеткіземін?",
+      privacy: "Мәтін осы браузерде өңделеді. Аты-жөніңізді, карта нөмірін немесе құпия кодты енгізбеңіз.",
+      submit: "Жаттығу таңдау",
+      example: "Мысал енгізу",
+      sample: "Алдағы алты айда ноутбукке ақша жинағым келеді.",
+      result: "ЖИ таңдаған сабақ",
+      review: "ЖИ жауабы",
+      unknown: "Сұрақты нақтылай аласыз ба?",
+      retry: "Бір ғана жағдайды сипаттаңыз. Модель бюджет, жинақ, несие және алаяқтық тақырыптарын ажыратады.",
+      correct: "Дұрыс.",
+      incorrect: "Тағы бір рет байқап көріңіз.",
+      full: "Платформадағы толық сабақты оқу",
+      scope: "Модель қандай тақырыптарды таниды?",
+      topics: "Бюджет, жинақ, несие және қаржылық алаяқтық. Нәтиже оқу тақырыбын таңдауға арналған.",
+      home: "QARZHЫ платформасы",
+      blank: "Сұрағыңызды жазыңыз."
+    },
+    ru: {
+      heading: "В каком финансовом вопросе вы хотите разобраться?",
+      intro: "Опишите ситуацию своими словами. ИИ подберёт короткий урок и упражнение по вашему вопросу.",
+      question: "Ваш вопрос",
+      placeholder: "Например, как распределить стипендию на месяц?",
+      privacy: "Текст обрабатывается в этом браузере. Оставьте при себе имя, номер карты и секретные коды.",
+      submit: "Подобрать упражнение",
+      example: "Вставить пример",
+      sample: "Хочу накопить на ноутбук за ближайшие полгода.",
+      result: "Урок подобрал ИИ",
+      review: "Ответ ИИ",
+      unknown: "Можете уточнить вопрос?",
+      retry: "Опишите одну ситуацию. Модель различает бюджет, накопления, кредит и финансовое мошенничество.",
+      correct: "Верно.",
+      incorrect: "Попробуйте ещё раз.",
+      full: "Открыть полный урок на платформе",
+      scope: "Какие темы распознаёт модель?",
+      topics: "Бюджет, накопления, кредиты и финансовое мошенничество. Рекомендация помогает выбрать учебную тему.",
+      home: "Платформа QARZHЫ",
+      blank: "Введите свой вопрос."
+    }
+  };
+  var get = (id) => document.getElementById(id);
+  var question = get("question");
+  var predict = trainGuide();
+  var fileMode = location.protocol === "file:";
+  var lang = new URLSearchParams(location.search).get("lang");
+  if (lang !== "ru" && lang !== "kk") {
+    try {
+      lang = localStorage.getItem("qz_lang");
+    } catch {
+    }
+    if (lang !== "ru") lang = "kk";
+  }
+  var currentTopic;
+  var attempted = false;
+  var selected = null;
+  question.maxLength = maxLength;
+  function displayFeedback(option) {
+    const item = lessons[currentTopic][lang];
+    const correct = option === item.answer;
+    const feedback = get("feedback");
+    feedback.hidden = false;
+    feedback.dataset.correct = String(correct);
+    feedback.textContent = correct ? copy[lang].correct + " " + item.why : copy[lang].incorrect + " " + item.note;
+    for (const [index, button] of [...get("answers").children].entries()) button.setAttribute("aria-pressed", String(index === option));
+  }
+  function displayResult() {
+    get("result").hidden = !attempted;
+    if (!attempted) return;
+    const ui = copy[lang];
+    const item = lessons[currentTopic]?.[lang];
+    get("result-label").textContent = item ? ui.result : ui.review;
+    get("result-title").textContent = item?.title || ui.unknown;
+    get("lesson-note").textContent = item?.note || ui.retry;
+    get("practice").hidden = !item;
+    get("full-lesson").hidden = !item || fileMode;
+    get("feedback").hidden = true;
+    get("answers").replaceChildren();
+    if (!item) return;
+    get("exercise").textContent = item.question;
+    item.choices.forEach((choice, index) => {
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = "option";
+      button.textContent = choice;
+      button.setAttribute("aria-pressed", "false");
+      button.onclick = () => {
+        selected = index;
+        displayFeedback(index);
+      };
+      get("answers").append(button);
+    });
+    get("full-lesson").href = "/topic?c=life&t=" + lessons[currentTopic].slug + "&lang=" + lang;
+    get("full-lesson").textContent = ui.full;
+    if (selected !== null) displayFeedback(selected);
+  }
+  function render() {
+    const ui = copy[lang];
+    document.documentElement.lang = lang;
+    document.title = "QARZHЫ Guide · " + ui.question;
+    for (const [id, key] of Object.entries({ heading: "heading", "intro-text": "intro", "question-label": "question", privacy: "privacy", recommend: "submit", example: "example", "scope-title": "scope", "scope-text": "topics" })) get(id).textContent = ui[key];
+    get("brand").href = fileMode ? "#" : "/?lang=" + lang;
+    get("brand").setAttribute("aria-label", fileMode ? "QARZHЫ Guide" : ui.home);
+    question.placeholder = ui.placeholder;
+    for (const button of document.querySelectorAll("[data-lang]")) button.setAttribute("aria-pressed", String(button.dataset.lang === lang));
+    displayResult();
+  }
+  for (const button of document.querySelectorAll("[data-lang]")) button.onclick = () => {
+    lang = button.dataset.lang;
+    if (!fileMode) {
+      try {
+        localStorage.setItem("qz_lang", lang);
+      } catch {
+      }
+      const url = new URL(location.href);
+      url.searchParams.set("lang", lang);
+      history.replaceState(null, "", url);
+    }
+    question.setCustomValidity("");
+    render();
+  };
+  function clearResult() {
+    attempted = false;
+    selected = null;
+    question.setCustomValidity("");
+    get("result").hidden = true;
+  }
+  question.addEventListener("input", clearResult);
+  get("example").onclick = () => {
+    clearResult();
+    question.value = copy[lang].sample;
+    question.focus();
+  };
+  get("question-form").onsubmit = (event) => {
+    event.preventDefault();
+    if (!question.value.trim()) {
+      question.setCustomValidity(copy[lang].blank);
+      question.reportValidity();
+      return;
+    }
+    currentTopic = predict(question.value);
+    selected = null;
+    attempted = true;
+    displayResult();
+    get("result").focus({ preventScroll: true });
+    get("result").scrollIntoView({ block: "nearest" });
+  };
+  render();
+})();
+</script>
+</body>
+</html>

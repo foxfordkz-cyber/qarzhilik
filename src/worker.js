@@ -11,6 +11,7 @@
 
 import { fetchBankRates } from "./fx.js";
 import { refreshBankProducts, readBankProducts } from "./products.js";
+import { academyApi } from './academy.js';
 
 const COURSES = ["life", "pro"];
 const SESSION_COOKIE = "qz_session";
@@ -31,6 +32,7 @@ export default {
       return await handleApi(request, env, ctx, url);
     } catch (err) {
       console.error(err);
+      if (err instanceof SyntaxError) return json({ error: 'Некорректный JSON / JSON дерегі қате' }, 400);
       return json({ error: "Сервер қатесі. Кейінірек қайталап көріңіз." }, 500);
     }
   },
@@ -50,6 +52,12 @@ async function handleApi(request, env, ctx, url) {
 
   if (request.method === "POST" && !isSameOrigin(request, url)) {
     return json({ error: "Рұқсат жоқ" }, 403);
+  }
+
+  if (url.pathname.startsWith('/api/academy')) return academyApi(request, env, await currentUser(request, env), url);
+  if (route === 'POST /api/login' || route === 'POST /api/register') {
+    const limited = await limitAuth(request, env);
+    if (limited) return limited;
   }
 
   switch (route) {
@@ -75,7 +83,7 @@ async function register(request, env) {
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) || email.length > 120) {
     return json({ error: "Email дұрыс емес" }, 400);
   }
-  if (password.length < 6) return json({ error: "Құпиясөз кемінде 6 таңбадан тұруы керек" }, 400);
+  if (password.length < 8 || password.length > 128) return json({ error: "Құпиясөз 8–128 таңбадан тұруы керек / Пароль: 8–128 символов" }, 400);
 
   const exists = await env.DB.prepare("SELECT id FROM users WHERE email = ?").bind(email).first();
   if (exists) return json({ error: "Бұл email бұрын тіркелген. Кіріп көріңіз." }, 409);
@@ -88,14 +96,15 @@ async function register(request, env) {
     .run();
 
   const userId = res.meta.last_row_id;
-  const cookie = await createSession(env, userId);
-  return json({ user: { id: userId, name, email } }, 201, { "Set-Cookie": cookie });
+  const session = await createSession(env, userId);
+  return json({ user: { id: userId, name, email }, ...(request.headers.get('X-QZ-Client') === 'mobile' ? { token: session.token } : {}) }, 201, { "Set-Cookie": session.cookie });
 }
 
 async function login(request, env) {
   const body = await readJson(request);
   const email = String(body.email || "").trim().toLowerCase();
   const password = String(body.password || "");
+  if (!email || email.length > 120 || !password || password.length > 128) return json({ error: 'Email немесе құпиясөз қате / Неверный email или пароль' }, 401);
 
   const user = await env.DB
     .prepare("SELECT id, name, email, password_hash, salt FROM users WHERE email = ?")
@@ -108,12 +117,12 @@ async function login(request, env) {
     return json({ error: "Email немесе құпиясөз қате" }, 401);
   }
 
-  const cookie = await createSession(env, user.id);
-  return json({ user: { id: user.id, name: user.name, email: user.email } }, 200, { "Set-Cookie": cookie });
+  const session = await createSession(env, user.id);
+  return json({ user: { id: user.id, name: user.name, email: user.email }, ...(request.headers.get('X-QZ-Client') === 'mobile' ? { token: session.token } : {}) }, 200, { "Set-Cookie": session.cookie });
 }
 
 async function logout(request, env) {
-  const token = getCookie(request, SESSION_COOKIE);
+  const token = sessionToken(request);
   if (token) await env.DB.prepare("DELETE FROM sessions WHERE token = ?").bind(token).run();
   return json({ ok: true }, 200, {
     "Set-Cookie": `${SESSION_COOKIE}=; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=0`,
@@ -262,20 +271,39 @@ async function createSession(env, userId) {
       .prepare("INSERT INTO sessions (token, user_id, expires_at) VALUES (?, ?, ?)")
       .bind(token, userId, now + maxAge * 1000),
   ]);
-  return `${SESSION_COOKIE}=${token}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=${maxAge}`;
+  return { token, cookie: `${SESSION_COOKIE}=${token}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=${maxAge}` };
 }
 
 async function currentUser(request, env) {
-  const token = getCookie(request, SESSION_COOKIE);
+  const token = sessionToken(request);
   if (!token || !/^[a-f0-9]{64}$/.test(token)) return null;
   return env.DB
     .prepare(
-      `SELECT u.id, u.name, u.email FROM sessions s
+      `SELECT u.id, u.name, u.email, u.is_admin FROM sessions s
        JOIN users u ON u.id = s.user_id
        WHERE s.token = ? AND s.expires_at > ?`
     )
     .bind(token, Date.now())
     .first();
+}
+
+function sessionToken(request) {
+  const bearer = request.headers.get('Authorization')?.match(/^Bearer ([a-f0-9]{64})$/);
+  return bearer ? bearer[1] : getCookie(request, SESSION_COOKIE);
+}
+
+async function limitAuth(request, env) {
+  const ip = request.headers.get('CF-Connecting-IP') || 'local';
+  const now = Date.now(), window = 15 * 60 * 1000;
+  const { email = '' } = await readJson(request.clone());
+  const keys = [[`ip:${ip}`, 100], [`email:${String(email).trim().toLowerCase()}`, 15]];
+  await env.DB.prepare('DELETE FROM auth_limits WHERE resets_at < ?').bind(now).run();
+  for (const [value, max] of keys) {
+    const bucket = bytesToHex(new Uint8Array(await crypto.subtle.digest('SHA-256', new TextEncoder().encode(value))));
+    await env.DB.prepare('INSERT INTO auth_limits (bucket, hits, resets_at) VALUES (?, 1, ?) ON CONFLICT(bucket) DO UPDATE SET hits = hits + 1').bind(bucket, now + window).run();
+    const limit = await env.DB.prepare('SELECT hits FROM auth_limits WHERE bucket = ?').bind(bucket).first();
+    if (limit.hits > max) return json({ error: 'Слишком много попыток. Повторите через 15 минут. / 15 минуттан кейін қайталаңыз.' }, 429, { 'Retry-After': '900' });
+  }
 }
 
 // ---------- Helpers ----------

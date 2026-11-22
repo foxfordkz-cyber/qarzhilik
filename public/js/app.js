@@ -265,7 +265,8 @@
   // ---------- Header / Footer ----------
   const NAV = [
     { href: "/#home", id: "home", label: "Басты бет" },
-    { href: "/#learn", id: "learn", label: "Қаржыны үйрену" },
+    { href: "/family", id: "family", label: "Бюджет" },
+    { href: "/academy", id: "learn", label: "Academy" },
     { href: "/#world", id: "world", label: "Қаржы әлемі" },
     { href: "/#about", id: "about", label: "QARZHЫ туралы" },
   ];

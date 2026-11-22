@@ -2,8 +2,13 @@
   "name": "qarzhy",
   "version": "1.0.0",
   "private": true,
+  "type": "module",
   "description": "QARZHЫ — қаржылық сауаттылық платформасы (Cloudflare Workers + D1)",
   "scripts": {
+    "dev:local": "node server/index.mjs",
+    "test": "node --test tests/*.test.mjs",
+    "eval:guide": "node tests/guide-eval.mjs",
+    "eval:family": "node tests/family-eval.mjs",
     "dev": "wrangler dev",
     "db:migrate:local": "wrangler d1 migrations apply qarzhy-db --local",
     "db:migrate": "wrangler d1 migrations apply qarzhy-db --remote",

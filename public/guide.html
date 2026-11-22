@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="kk">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#103e32">
+  <title>QARZHЫ Guide</title>
+  <link rel="stylesheet" href="/css/guide.css">
+</head>
+<body>
+  <header class="bar"><div class="bar-inner">
+    <a href="/" class="brand" id="brand">QARZHЫ <span>Guide</span></a>
+    <div class="language" aria-label="Тіл / Язык"><button type="button" data-lang="kk" lang="kk" aria-pressed="true">ҚАЗ</button><button type="button" data-lang="ru" lang="ru" aria-pressed="false">РУС</button></div>
+  </div></header>
+  <main>
+    <section class="intro">
+      <div class="intro-inner">
+        <h1 id="heading">Қай қаржы сұрағын түсінгіңіз келеді?</h1>
+        <p id="intro-text">Жағдайды өз сөзіңізбен жазыңыз. ЖИ тақырыпты анықтап, қысқа сабақ пен жаттығу ұсынады.</p>
+      </div>
+    </section>
+    <div class="workspace">
+      <form id="question-form" autocomplete="off">
+        <label for="question" id="question-label">Сұрағыңыз</label>
+        <textarea id="question" maxlength="400" rows="3" placeholder="Мысалы, шәкіртақымды бір айға қалай жеткіземін?" required aria-describedby="privacy"></textarea>
+        <p class="privacy" id="privacy">Мәтін осы браузерде өңделеді. Аты-жөніңізді, карта нөмірін немесе құпия кодты енгізбеңіз.</p>
+        <div class="form-actions"><button class="action" type="submit" id="recommend">Жаттығу таңдау</button><button type="button" class="text-button" id="example">Мысал енгізу</button></div>
+      </form>
+      <section id="result" tabindex="-1" hidden aria-labelledby="result-title">
+        <p class="caption" id="result-label"></p><h2 id="result-title"></h2><p id="lesson-note"></p>
+        <fieldset id="practice" hidden>
+          <legend id="exercise"></legend><div id="answers"></div>
+          <p id="feedback" role="status" hidden></p>
+        </fieldset>
+        <a class="more" id="full-lesson" hidden></a>
+      </section>
+      <aside id="scope"><h2 id="scope-title">Модель қандай тақырыптарды таниды?</h2><p id="scope-text">Бюджет, жинақ, несие және қаржылық алаяқтық. Нәтиже оқу тақырыбын таңдауға арналған.</p></aside>
+    </div>
+  </main>
+  <noscript>ЖИ жұмыс істеуі үшін JavaScript қосыңыз. Для работы модели включите JavaScript.</noscript>
+  <script type="module" src="/js/guide.js"></script>
+</body>
+</html>

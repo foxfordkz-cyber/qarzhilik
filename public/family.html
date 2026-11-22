@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="kk">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#143d32">
+  <title>Отбасы бюджеті · QARZHЫ</title>
+  <link rel="stylesheet" href="/css/family.css">
+</head>
+<body>
+  <header class="top"><div class="shell top-inner">
+    <a href="/" id="brand" class="wordmark" aria-label="QARZHЫ">QARZHЫ</a>
+    <div class="lang" aria-label="Тіл / Язык"><button type="button" data-lang="kk" aria-pressed="true" lang="kk">ҚАЗ</button><button type="button" data-lang="ru" aria-pressed="false" lang="ru">РУС</button></div>
+  </div></header>
+  <main class="shell">
+    <section class="intro"><h1 data-t="title">Отбасы бюджеті</h1><p data-t="intro">Бір айға кіріс пен шығынды жоспарлаңыз. ЖИ шығындарды санаттарға бөледі, ал жоспар мақсатыңызға қанша ақша қалатынын көрсетеді.</p></section>
+    <form id="planner" autocomplete="off" novalidate>
+      <div class="input-grid">
+        <div class="money-fields">
+          <h2 data-t="planHeading">Айлық жоспар</h2>
+          <label for="income" data-t="income">Отбасының айлық кірісі</label>
+          <div class="amount"><input id="income" inputmode="numeric" required placeholder="420 000" autocomplete="off"><span>₸</span></div>
+          <label for="goal" data-t="goal">Мақсатқа әлі қажет сома</label>
+          <div class="amount"><input id="goal" inputmode="numeric" placeholder="0" autocomplete="off"><span>₸</span></div>
+          <label for="months" data-t="months">Мақсатқа дейінгі ай саны</label>
+          <div class="amount"><input id="months" inputmode="numeric" value="6" autocomplete="off"><span data-t="monthUnit">ай</span></div>
+        </div>
+        <div class="expense-fields">
+          <h2><label for="expenses" data-t="expensesHeading">Жоспарланған шығындар</label></h2>
+          <p class="hint" id="expense-hint" data-t="hint">Әр жолға атауын және сомасын бүтін теңгемен жазыңыз.</p>
+          <textarea id="expenses" rows="6" aria-describedby="expense-hint privacy" placeholder="Пәтерақы — 90 000&#10;Азық-түлік — 85 000"></textarea>
+          <p class="privacy" id="privacy" data-t="privacy">Есептеу осы құрылғыда жүреді. Енгізген қаржы деректеріңіз сақталмайды.</p>
+        </div>
+      </div>
+      <p id="error" role="alert" hidden></p>
+      <div class="actions"><button type="submit" class="primary" id="calculate" data-t="calculate">Жоспарды есептеу</button><button type="button" class="secondary" id="sample" data-t="sample">Отбасы мысалын енгізу</button></div>
+    </form>
+    <section id="results" hidden aria-labelledby="result-title" tabindex="-1">
+      <h2 id="result-title" data-t="resultTitle">Бір айға арналған нәтиже</h2>
+      <dl class="metrics">
+        <div><dt data-t="expenseTotal">Барлық шығын</dt><dd id="total-expenses"></dd></div>
+        <div><dt data-t="balance">Шығыннан кейін</dt><dd id="balance"></dd></div>
+        <div><dt data-t="monthly">Мақсатқа ай сайын</dt><dd id="monthly-goal"></dd></div>
+        <div class="net"><dt data-t="after">Мақсаттан кейінгі қалдық</dt><dd id="after-goal"></dd></div>
+      </dl>
+      <p id="insight" role="status"></p>
+      <div class="result-grid">
+        <section class="lines"><h3 data-t="classTitle">ЖИ ұсынған санаттар</h3><p class="hint" data-t="classHint">Әр санатты тексеріп, қажет болса өзгертіңіз. Санат таңдалмаған шығын да жалпы сомаға кіреді.</p>
+          <div id="classified"></div>
+        </section>
+        <section class="distribution"><h3 data-t="byCategory">Санаттар бойынша</h3><div id="summary"></div></section>
+      </div>
+    </section>
+    <noscript>Жоспарды есептеу үшін JavaScript қосыңыз. Для расчёта включите JavaScript.</noscript>
+  </main>
+  <script type="module" src="/js/family.js"></script>
+</body>
+</html>

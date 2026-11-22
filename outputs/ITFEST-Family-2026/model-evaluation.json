@@ -1,0 +1,480 @@
+{
+  "model": "QARZHY Family Expense 1.0",
+  "dataset": "Synthetic bilingual descriptions, held out from training. unknown means manual review.",
+  "trainingTotal": 120,
+  "metrics": {
+    "all": {
+      "correct": 51,
+      "total": 60
+    },
+    "known": {
+      "correct": 43,
+      "total": 50
+    },
+    "unknown": {
+      "correct": 8,
+      "total": 10
+    },
+    "byLanguage": {
+      "kk": {
+        "correct": 25,
+        "total": 30
+      },
+      "ru": {
+        "correct": 26,
+        "total": 30
+      }
+    },
+    "byCategory": {
+      "food": {
+        "correct": 8,
+        "total": 10
+      },
+      "housing": {
+        "correct": 8,
+        "total": 10
+      },
+      "transport": {
+        "correct": 10,
+        "total": 10
+      },
+      "health": {
+        "correct": 8,
+        "total": 10
+      },
+      "education": {
+        "correct": 9,
+        "total": 10
+      },
+      "unknown": {
+        "correct": 8,
+        "total": 10
+      }
+    },
+    "knownSentToReview": 5,
+    "knownMisclassified": 2,
+    "unknownAssignedCategory": 2
+  },
+  "rows": [
+    {
+      "language": "kk",
+      "description": "Базардан піскен алма мен өрік",
+      "expected": "food",
+      "predicted": "food",
+      "correct": true
+    },
+    {
+      "language": "kk",
+      "description": "Жексенбіге ет алдым",
+      "expected": "food",
+      "predicted": "unknown",
+      "correct": false
+    },
+    {
+      "language": "kk",
+      "description": "Бір бөлке нан",
+      "expected": "food",
+      "predicted": "unknown",
+      "correct": false
+    },
+    {
+      "language": "kk",
+      "description": "Балаларға кешкі асқа пицца",
+      "expected": "food",
+      "predicted": "food",
+      "correct": true
+    },
+    {
+      "language": "kk",
+      "description": "Көрші дүкеннен күріш пен шай",
+      "expected": "food",
+      "predicted": "food",
+      "correct": true
+    },
+    {
+      "language": "kk",
+      "description": "Үйдің жалдау ақысын аудардым",
+      "expected": "housing",
+      "predicted": "housing",
+      "correct": true
+    },
+    {
+      "language": "kk",
+      "description": "Осы айдың су түбіртегі",
+      "expected": "housing",
+      "predicted": "housing",
+      "correct": true
+    },
+    {
+      "language": "kk",
+      "description": "Асүйдегі кранды жөндеттім",
+      "expected": "housing",
+      "predicted": "housing",
+      "correct": true
+    },
+    {
+      "language": "kk",
+      "description": "Электр жарығы үшін төледік",
+      "expected": "housing",
+      "predicted": "housing",
+      "correct": true
+    },
+    {
+      "language": "kk",
+      "description": "Жылу үшін қарызды жаптық",
+      "expected": "housing",
+      "predicted": "unknown",
+      "correct": false
+    },
+    {
+      "language": "kk",
+      "description": "Таңғы автобуспен жолақы",
+      "expected": "transport",
+      "predicted": "transport",
+      "correct": true
+    },
+    {
+      "language": "kk",
+      "description": "Бекетте бензин құйдық",
+      "expected": "transport",
+      "predicted": "transport",
+      "correct": true
+    },
+    {
+      "language": "kk",
+      "description": "Әуежайға таксимен бардық",
+      "expected": "transport",
+      "predicted": "transport",
+      "correct": true
+    },
+    {
+      "language": "kk",
+      "description": "Пойызға екі билет",
+      "expected": "transport",
+      "predicted": "transport",
+      "correct": true
+    },
+    {
+      "language": "kk",
+      "description": "Метроға жол жүру картасы",
+      "expected": "transport",
+      "predicted": "transport",
+      "correct": true
+    },
+    {
+      "language": "kk",
+      "description": "Ауруханада талдау тапсырдым",
+      "expected": "health",
+      "predicted": "health",
+      "correct": true
+    },
+    {
+      "language": "kk",
+      "description": "Дәріханадан дәрумен алдым",
+      "expected": "health",
+      "predicted": "health",
+      "correct": true
+    },
+    {
+      "language": "kk",
+      "description": "Тісім ауырған соң стоматологқа бардым",
+      "expected": "health",
+      "predicted": "health",
+      "correct": true
+    },
+    {
+      "language": "kk",
+      "description": "Баланың дәрісіне жұмсадым",
+      "expected": "health",
+      "predicted": "education",
+      "correct": false
+    },
+    {
+      "language": "kk",
+      "description": "Көзілдірікке жаңа линза",
+      "expected": "health",
+      "predicted": "health",
+      "correct": true
+    },
+    {
+      "language": "kk",
+      "description": "Қызымның ағылшын курсы",
+      "expected": "education",
+      "predicted": "education",
+      "correct": true
+    },
+    {
+      "language": "kk",
+      "description": "Оқу жылына төрт дәптер",
+      "expected": "education",
+      "predicted": "education",
+      "correct": true
+    },
+    {
+      "language": "kk",
+      "description": "Ұлымның сабақтарына репетитор",
+      "expected": "education",
+      "predicted": "education",
+      "correct": true
+    },
+    {
+      "language": "kk",
+      "description": "Семестр үшін университетке аударым",
+      "expected": "education",
+      "predicted": "education",
+      "correct": true
+    },
+    {
+      "language": "kk",
+      "description": "Емтиханға дайындық оқулығы",
+      "expected": "education",
+      "predicted": "education",
+      "correct": true
+    },
+    {
+      "language": "kk",
+      "description": "Ағама туған күнге сый",
+      "expected": "unknown",
+      "predicted": "unknown",
+      "correct": true
+    },
+    {
+      "language": "kk",
+      "description": "Мұражайға кіру билеті",
+      "expected": "unknown",
+      "predicted": "transport",
+      "correct": false
+    },
+    {
+      "language": "kk",
+      "description": "Қысқы аяқкиім",
+      "expected": "unknown",
+      "predicted": "unknown",
+      "correct": true
+    },
+    {
+      "language": "kk",
+      "description": "Күшікке жаңа қарғыбау",
+      "expected": "unknown",
+      "predicted": "unknown",
+      "correct": true
+    },
+    {
+      "language": "kk",
+      "description": "Кімге екенін ұмытқан аударым",
+      "expected": "unknown",
+      "predicted": "unknown",
+      "correct": true
+    },
+    {
+      "language": "ru",
+      "description": "Батон и кефир по дороге домой",
+      "expected": "food",
+      "predicted": "food",
+      "correct": true
+    },
+    {
+      "language": "ru",
+      "description": "Мясо для воскресного обеда",
+      "expected": "food",
+      "predicted": "food",
+      "correct": true
+    },
+    {
+      "language": "ru",
+      "description": "Килограмм яблок на рынке",
+      "expected": "food",
+      "predicted": "food",
+      "correct": true
+    },
+    {
+      "language": "ru",
+      "description": "Пицца на ужин детям",
+      "expected": "food",
+      "predicted": "food",
+      "correct": true
+    },
+    {
+      "language": "ru",
+      "description": "Пачка риса и чай к завтраку",
+      "expected": "food",
+      "predicted": "food",
+      "correct": true
+    },
+    {
+      "language": "ru",
+      "description": "Перевёл хозяину за съём жилья",
+      "expected": "housing",
+      "predicted": "housing",
+      "correct": true
+    },
+    {
+      "language": "ru",
+      "description": "Оплатили воду по счётчику",
+      "expected": "housing",
+      "predicted": "housing",
+      "correct": true
+    },
+    {
+      "language": "ru",
+      "description": "Замена протекающего крана на кухне",
+      "expected": "housing",
+      "predicted": "transport",
+      "correct": false
+    },
+    {
+      "language": "ru",
+      "description": "Квитанция за электричество",
+      "expected": "housing",
+      "predicted": "housing",
+      "correct": true
+    },
+    {
+      "language": "ru",
+      "description": "Счёт за отопление квартиры",
+      "expected": "housing",
+      "predicted": "housing",
+      "correct": true
+    },
+    {
+      "language": "ru",
+      "description": "Пополнил транспортную карту дочери",
+      "expected": "transport",
+      "predicted": "transport",
+      "correct": true
+    },
+    {
+      "language": "ru",
+      "description": "Заправка по пути за город",
+      "expected": "transport",
+      "predicted": "transport",
+      "correct": true
+    },
+    {
+      "language": "ru",
+      "description": "Такси из аэропорта домой",
+      "expected": "transport",
+      "predicted": "transport",
+      "correct": true
+    },
+    {
+      "language": "ru",
+      "description": "Два билета на поезд",
+      "expected": "transport",
+      "predicted": "transport",
+      "correct": true
+    },
+    {
+      "language": "ru",
+      "description": "Абонемент на метро",
+      "expected": "transport",
+      "predicted": "transport",
+      "correct": true
+    },
+    {
+      "language": "ru",
+      "description": "Сдали анализы в клинике",
+      "expected": "health",
+      "predicted": "health",
+      "correct": true
+    },
+    {
+      "language": "ru",
+      "description": "Витамины из аптеки для бабушки",
+      "expected": "health",
+      "predicted": "health",
+      "correct": true
+    },
+    {
+      "language": "ru",
+      "description": "Удаление зуба у стоматолога",
+      "expected": "health",
+      "predicted": "health",
+      "correct": true
+    },
+    {
+      "language": "ru",
+      "description": "Купила таблетки от простуды",
+      "expected": "health",
+      "predicted": "health",
+      "correct": true
+    },
+    {
+      "language": "ru",
+      "description": "Линзы для очков",
+      "expected": "health",
+      "predicted": "unknown",
+      "correct": false
+    },
+    {
+      "language": "ru",
+      "description": "Английский для дочери на месяц",
+      "expected": "education",
+      "predicted": "unknown",
+      "correct": false
+    },
+    {
+      "language": "ru",
+      "description": "Две тетради к началу четверти",
+      "expected": "education",
+      "predicted": "education",
+      "correct": true
+    },
+    {
+      "language": "ru",
+      "description": "Индивидуальные занятия с репетитором",
+      "expected": "education",
+      "predicted": "education",
+      "correct": true
+    },
+    {
+      "language": "ru",
+      "description": "Взнос за семестр в университете",
+      "expected": "education",
+      "predicted": "education",
+      "correct": true
+    },
+    {
+      "language": "ru",
+      "description": "Учебник для подготовки к экзамену",
+      "expected": "education",
+      "predicted": "education",
+      "correct": true
+    },
+    {
+      "language": "ru",
+      "description": "Подарок брату к юбилею",
+      "expected": "unknown",
+      "predicted": "unknown",
+      "correct": true
+    },
+    {
+      "language": "ru",
+      "description": "Билеты на концерт",
+      "expected": "unknown",
+      "predicted": "transport",
+      "correct": false
+    },
+    {
+      "language": "ru",
+      "description": "Зимние ботинки",
+      "expected": "unknown",
+      "predicted": "unknown",
+      "correct": true
+    },
+    {
+      "language": "ru",
+      "description": "Новый поводок для щенка",
+      "expected": "unknown",
+      "predicted": "unknown",
+      "correct": true
+    },
+    {
+      "language": "ru",
+      "description": "Перевод по номеру",
+      "expected": "unknown",
+      "predicted": "unknown",
+      "correct": true
+    }
+  ]
+}

@@ -1,0 +1,666 @@
+<!doctype html>
+<html lang="kk">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#143d32">
+  <title>Отбасы бюджеті · QARZHЫ</title>
+  <style>:root { color-scheme: light; --ink:#143d32; --moss:#3d6653; --muted:#4c6458; --paper:#f7f6ef; --white:#fff; --rule:#cbd5c9; --gold:#efb45d; --danger:#8e3326; }
+* { box-sizing:border-box; }
+[hidden] { display:none !important; }
+body { margin:0; background:var(--paper); color:var(--ink); font:16px/1.5 Inter,"Segoe UI",Arial,sans-serif; }
+button,input,textarea,select { font:inherit; color:inherit; }
+button,select { cursor:pointer; }
+button { touch-action:manipulation; }
+.shell { max-width:1110px; padding:0 32px; margin:auto; }
+.top { background:var(--ink); color:white; }
+.top-inner { display:flex; justify-content:space-between; align-items:center; min-height:62px; }
+.wordmark { color:white; font-size:25px; letter-spacing:-1.2px; font-weight:800; text-decoration:none; }
+.lang { display:flex; gap:2px; padding:3px; border:1px solid #709382; border-radius:30px; }
+.lang button { border:0; border-radius:20px; background:none; color:#fff; font-size:13px; font-weight:700; padding:4px 12px; }
+.lang button[aria-pressed="true"] { color:var(--ink); background:#d8e9ce; }
+.intro { padding:31px 0 25px; max-width:800px; }
+h1,h2,h3,p,dl,dd { margin:0; }
+h1 { font-size:clamp(39px,5vw,67px); font-weight:700; line-height:1.07; letter-spacing:-.052em; }
+.intro p { margin-top:10px; font-size:clamp(16px,1.7vw,20px); max-width:770px; color:var(--muted); }
+form { background:#fff; border:1px solid var(--rule); border-radius:15px; padding:23px 28px 22px; box-shadow:0 3px 8px #143d3206; }
+h2 { font-size:clamp(22px,2.6vw,29px); font-weight:650; line-height:1.25; letter-spacing:-.035em; }
+h3 { font-size:21px; letter-spacing:-.02em; line-height:1.25; }
+.input-grid { display:grid; grid-template-columns:minmax(0,.85fr) minmax(0,1.2fr); gap:38px; }
+.money-fields > label { display:block; margin:10px 0 3px; font-size:14px; font-weight:650; }
+.amount { display:flex; align-items:baseline; gap:5px; padding:5px 10px; border:1px solid #94a99a; border-radius:7px; background:#fff; }
+.amount input { min-width:0; width:100%; border:0; background:transparent; outline:none; font-variant-numeric:tabular-nums; }
+.amount span { font-size:14px; color:var(--muted); }
+.hint,.privacy { color:var(--muted); font-size:14px; line-height:1.45; }
+.hint { margin:6px 0 9px; }
+textarea { display:block; width:100%; min-height:142px; padding:10px 12px; resize:vertical; border:1px solid #94a99a; border-radius:7px; line-height:1.45; }
+::placeholder { color:#68796f; opacity:1; }
+.privacy { margin-top:5px; }
+.actions { margin-top:18px; display:flex; gap:10px 17px; flex-wrap:wrap; align-items:center; }
+.primary,.secondary { padding:9px 17px; font-weight:650; border-radius:8px; }
+.primary { border:1px solid var(--gold); background:var(--gold); color:#32270f; }
+.primary:hover { background:#f3bd6e; }
+.secondary { border:1px solid var(--rule); background:#fff; }
+.secondary:hover { background:#eef3eb; }
+:is(button,textarea,select,a):focus-visible,.amount:focus-within { outline:3px solid #2a69a4; outline-offset:2px; }
+#error { border-left:3px solid var(--danger); color:var(--danger); margin-top:12px; padding-left:10px; }
+main { padding-bottom:50px!important; }
+#results { margin-top:25px; scroll-margin-top:10px; }
+#results:focus { outline:none; }
+.metrics { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); margin:13px 0 0; background:var(--ink); border-radius:12px; color:#fff; overflow:hidden; }
+.metrics div { padding:15px 16px; border-right:1px solid #47675c; min-width:0; }
+.metrics dt { font-size:13px; font-weight:600; color:#dbebdd; }
+.metrics dd { font-size:clamp(19px,2.4vw,31px); line-height:1.25; font-weight:650; margin-top:5px; overflow-wrap:anywhere; font-variant-numeric:tabular-nums; letter-spacing:-.025em; }
+.metrics .net { background:#d5eac5; color:var(--ink); border:0; }.metrics .net dt { color:var(--ink); }
+.metrics .net.negative { background:#f7d8c4; }
+#insight { padding:10px 1px 0; color:var(--muted); }
+.result-grid { display:grid; grid-template-columns:minmax(0,1.5fr) minmax(0,1fr); gap:32px; border-top:1px solid var(--rule); padding-top:20px; margin-top:19px; }
+.entry { display:grid; grid-template-columns:minmax(0,1fr) minmax(135px,36%); align-items:center; gap:14px; border-bottom:1px solid var(--rule); padding:8px 0; }
+.entry strong,.entry small { display:block; }
+.entry strong { overflow-wrap:anywhere; font-weight:600; }
+.entry small { color:var(--muted); font-size:13px; }
+.entry select { width:100%; min-width:0; border:1px solid #91a697; background:white; padding:6px; border-radius:6px; }
+.entry select.attention { border:2px solid #aa611f; }
+.category-row { position:relative; padding:9px 0 7px; }
+.category-line { display:flex; justify-content:space-between; gap:12px; font-size:14px; }
+.track { width:100%; height:5px; border-radius:5px; background:#dfe5db; margin-top:5px; }
+.track span { display:block; background:#568165; height:100%; border-radius:inherit; }
+.category-row.unknown .track span { background:#b7702f; }
+@media(max-width:700px){
+  .shell { padding:0 16px; }
+  .top-inner { min-height:53px; }
+  .intro { padding:21px 0 18px; }
+  form { padding:17px; }
+  .input-grid,.result-grid { grid-template-columns:1fr; gap:22px; }
+  .metrics { grid-template-columns:repeat(2,minmax(0,1fr)); }
+  .metrics div { border-bottom:1px solid #47675c; }
+  .metrics div:nth-child(even) { border-right:0; }
+  .metrics div:nth-child(n+3) { border-bottom:0; }
+  .entry { grid-template-columns:minmax(0,1fr) minmax(110px,43%); }
+}
+@media print {
+  body,form { background:#fff; }
+  .actions,.lang,.top,.privacy { display:none; }
+  .shell { padding:0 6px; }
+  .metrics { color:var(--ink); background:#ecf3e7; }
+  .metrics dt { color:var(--ink); }
+}
+</style>
+</head>
+<body>
+  <header class="top"><div class="shell top-inner">
+    <a href="/" id="brand" class="wordmark" aria-label="QARZHЫ">QARZHЫ</a>
+    <div class="lang" aria-label="Тіл / Язык"><button type="button" data-lang="kk" aria-pressed="true" lang="kk">ҚАЗ</button><button type="button" data-lang="ru" aria-pressed="false" lang="ru">РУС</button></div>
+  </div></header>
+  <main class="shell">
+    <section class="intro"><h1 data-t="title">Отбасы бюджеті</h1><p data-t="intro">Бір айға кіріс пен шығынды жоспарлаңыз. ЖИ шығындарды санаттарға бөледі, ал жоспар мақсатыңызға қанша ақша қалатынын көрсетеді.</p></section>
+    <form id="planner" autocomplete="off" novalidate>
+      <div class="input-grid">
+        <div class="money-fields">
+          <h2 data-t="planHeading">Айлық жоспар</h2>
+          <label for="income" data-t="income">Отбасының айлық кірісі</label>
+          <div class="amount"><input id="income" inputmode="numeric" required placeholder="420 000" autocomplete="off"><span>₸</span></div>
+          <label for="goal" data-t="goal">Мақсатқа әлі қажет сома</label>
+          <div class="amount"><input id="goal" inputmode="numeric" placeholder="0" autocomplete="off"><span>₸</span></div>
+          <label for="months" data-t="months">Мақсатқа дейінгі ай саны</label>
+          <div class="amount"><input id="months" inputmode="numeric" value="6" autocomplete="off"><span data-t="monthUnit">ай</span></div>
+        </div>
+        <div class="expense-fields">
+          <h2><label for="expenses" data-t="expensesHeading">Жоспарланған шығындар</label></h2>
+          <p class="hint" id="expense-hint" data-t="hint">Әр жолға атауын және сомасын бүтін теңгемен жазыңыз.</p>
+          <textarea id="expenses" rows="6" aria-describedby="expense-hint privacy" placeholder="Пәтерақы — 90 000&#10;Азық-түлік — 85 000"></textarea>
+          <p class="privacy" id="privacy" data-t="privacy">Есептеу осы құрылғыда жүреді. Енгізген қаржы деректеріңіз сақталмайды.</p>
+        </div>
+      </div>
+      <p id="error" role="alert" hidden></p>
+      <div class="actions"><button type="submit" class="primary" id="calculate" data-t="calculate">Жоспарды есептеу</button><button type="button" class="secondary" id="sample" data-t="sample">Отбасы мысалын енгізу</button></div>
+    </form>
+    <section id="results" hidden aria-labelledby="result-title" tabindex="-1">
+      <h2 id="result-title" data-t="resultTitle">Бір айға арналған нәтиже</h2>
+      <dl class="metrics">
+        <div><dt data-t="expenseTotal">Барлық шығын</dt><dd id="total-expenses"></dd></div>
+        <div><dt data-t="balance">Шығыннан кейін</dt><dd id="balance"></dd></div>
+        <div><dt data-t="monthly">Мақсатқа ай сайын</dt><dd id="monthly-goal"></dd></div>
+        <div class="net"><dt data-t="after">Мақсаттан кейінгі қалдық</dt><dd id="after-goal"></dd></div>
+      </dl>
+      <p id="insight" role="status"></p>
+      <div class="result-grid">
+        <section class="lines"><h3 data-t="classTitle">ЖИ ұсынған санаттар</h3><p class="hint" data-t="classHint">Әр санатты тексеріп, қажет болса өзгертіңіз. Санат таңдалмаған шығын да жалпы сомаға кіреді.</p>
+          <div id="classified"></div>
+        </section>
+        <section class="distribution"><h3 data-t="byCategory">Санаттар бойынша</h3><div id="summary"></div></section>
+      </div>
+    </section>
+    <noscript>Жоспарды есептеу үшін JavaScript қосыңыз. Для расчёта включите JavaScript.</noscript>
+  </main>
+  <script>(() => {
+  // public/js/family-training.js
+  var familyTraining = {
+    food: {
+      kk: [
+        "азық-түлік дүкенінен апталық сауда",
+        "дүкеннен нан сүт пен айран",
+        "көкөніс пен жеміс базары",
+        "ет балық және жұмыртқа",
+        "үйге ұн күріш пен макарон",
+        "супермаркеттегі азық-түлік",
+        "кафеде түскі ас пен шай",
+        "таңғы асқа ірімшік",
+        "алма алмұрт және жидек",
+        "асханадан кешкі ас",
+        "пицца мен дайын тамаққа тапсырыс",
+        "отбасына тамақ алдық"
+      ],
+      ru: [
+        "продукты в супермаркете",
+        "хлеб молоко и кефир",
+        "овощи и фрукты с рынка",
+        "мясо рыба и яйца",
+        "закупка крупы риса и макарон",
+        "продуктовая корзина на неделю",
+        "обед и чай в кафе",
+        "сыр и масло на завтрак",
+        "яблоки и груши",
+        "ужин в столовой",
+        "доставка пиццы и готовой еды",
+        "купили продукты для семьи"
+      ]
+    },
+    housing: {
+      kk: [
+        "пәтерақы төлеу",
+        "тұрғын үйді жалдау ақысы",
+        "коммуналдық қызмет төлемі",
+        "үйдегі су мен кәріз",
+        "электр қуаты мен жарық ақысы",
+        "газ бен жылу түбіртегі",
+        "пәтерді жөндеу материалдары",
+        "сантехник кранды ауыстырды",
+        "үйге интернет абоненттік төлемі",
+        "кіреберісті күтіп ұстау",
+        "пәтер жалға алу",
+        "тұрғын үйге арналған шығын"
+      ],
+      ru: [
+        "аренда квартиры",
+        "съём жилья на месяц",
+        "коммунальные услуги",
+        "водоснабжение и канализация",
+        "свет и электричество по счётчику",
+        "квитанция за газ и отопление",
+        "ремонт квартиры и стройматериалы",
+        "сантехник поменял кран",
+        "домашний интернет и связь",
+        "обслуживание подъезда",
+        "квартплата хозяину жилья",
+        "оплата горячей и холодной воды"
+      ]
+    },
+    transport: {
+      kk: [
+        "қоғамдық көлікке жолақы",
+        "автобусқа абонемент",
+        "метро картасын толтыру",
+        "такси қызметі",
+        "көлікке бензин құю",
+        "қалааралық пойыз билеті",
+        "көліктің тұрағы үшін ақы",
+        "автомобильге жанармай",
+        "ұшақпен ұшуға билет",
+        "көліктегі жол жүру ақысы",
+        "автокөлік дөңгелегін ауыстыру",
+        "таксимен сапар құны"
+      ],
+      ru: [
+        "проезд в общественном транспорте",
+        "автобусный проездной",
+        "пополнение карты метро",
+        "поездка на такси",
+        "бензин на заправке",
+        "проезд на междугороднем поезде",
+        "платная парковка автомобиля",
+        "топливо для машины",
+        "авиабилет туда и обратно",
+        "транспортная карта для поездок",
+        "замена шин на машине",
+        "билет на автобус"
+      ]
+    },
+    health: {
+      kk: [
+        "дәріханадан дәрі-дәрмек",
+        "дәрігердің қабылдауы",
+        "емханадағы медициналық тексеру",
+        "тіс дәрігерінің емі",
+        "қан талдауы зертханада",
+        "дәрумен мен таблетка",
+        "көз дәрігері тағайындаған көзілдірік",
+        "дәрігер жазған дәрі",
+        "стоматолог қызметі",
+        "ауруханада емделу",
+        "денсаулыққа жұмсалған шығын",
+        "дәріханада рецепт бойынша сатып алу"
+      ],
+      ru: [
+        "лекарства из аптеки",
+        "приём у врача",
+        "медицинское обследование в поликлинике",
+        "лечение зубов",
+        "анализ крови в лаборатории",
+        "витамины и таблетки",
+        "очки по рецепту офтальмолога",
+        "лекарство по назначению врача",
+        "запись к стоматологу",
+        "лечение в больнице",
+        "расходы на здоровье",
+        "антибиотик в аптеке"
+      ]
+    },
+    education: {
+      kk: [
+        "баланың оқу ақысы",
+        "мектепке дәптер қалам",
+        "ағылшын тілі курсына жазылу",
+        "университетте оқу төлемі",
+        "математикадан репетитор",
+        "мектепке оқулықтар",
+        "студенттің семестрлік оқу ақысы",
+        "қосымша сабақ үшін ақы",
+        "емтиханға дайындық курсы",
+        "балаға білім беру",
+        "мектепке керек оқу құралдары",
+        "балабақша ақысы"
+      ],
+      ru: [
+        "плата за учёбу",
+        "школьные тетради и ручки",
+        "курсы английского языка",
+        "оплата обучения в университете",
+        "репетитор по математике",
+        "покупка учебников для школы",
+        "стоимость учебного семестра",
+        "дополнительные занятия после уроков",
+        "курс подготовки к экзаменам",
+        "образование ребёнка",
+        "канцелярские принадлежности к школе",
+        "оплата детского сада"
+      ]
+    }
+  };
+
+  // public/js/family-model.js
+  function features(description) {
+    const terms = /* @__PURE__ */ new Set();
+    const words = description.normalize("NFKC").toLowerCase().replaceAll("ё", "е").match(/\p{L}+/gu) || [];
+    for (const word of words) {
+      if (word.length < 2) continue;
+      terms.add("word:" + word);
+      const padded = "^" + word + "$";
+      for (const size of [3, 4]) {
+        for (let start = 0; start + size <= padded.length; start++) terms.add(padded.slice(start, start + size));
+      }
+    }
+    return terms;
+  }
+  function fit(corpus) {
+    const examples = [];
+    const documentCounts = /* @__PURE__ */ new Map();
+    for (const [category, languages] of Object.entries(corpus)) {
+      for (const descriptions of Object.values(languages)) {
+        for (const description of descriptions) {
+          const terms = features(description);
+          for (const term of terms) documentCounts.set(term, (documentCounts.get(term) || 0) + 1);
+          examples.push({ category, terms });
+        }
+      }
+    }
+    const squaredIdf = /* @__PURE__ */ new Map();
+    for (const [term, count] of documentCounts) {
+      squaredIdf.set(term, (1 + Math.log((examples.length + 1) / (count + 1))) ** 2);
+    }
+    function norm(terms) {
+      let sum = 0;
+      for (const term of terms) sum += squaredIdf.get(term) || 0;
+      return Math.sqrt(sum);
+    }
+    for (const example of examples) example.norm = norm(example.terms);
+    return function classify(description) {
+      if (typeof description !== "string" || description.length > 400) return null;
+      const terms = features(description);
+      const known = [...terms].filter((term) => squaredIdf.has(term));
+      if (known.length < 3 || known.length / terms.size < 0.4) return null;
+      const queryNorm = norm(known);
+      const neighbors = /* @__PURE__ */ new Map();
+      for (const example of examples) {
+        let dot = 0;
+        for (const term of known) if (example.terms.has(term)) dot += squaredIdf.get(term);
+        const cosine = dot / (queryNorm * example.norm);
+        if (!neighbors.has(example.category)) neighbors.set(example.category, []);
+        neighbors.get(example.category).push(cosine);
+      }
+      const ranked = [...neighbors].map(([category, similarities]) => {
+        const [first, second, third] = similarities.sort((a, b) => b - a);
+        return { category, score: 0.7 * first + 0.2 * second + 0.1 * third };
+      }).sort((a, b) => b.score - a.score);
+      const [best, next] = ranked;
+      if (best.score < 0.23 || best.score - next.score < 0.07) return null;
+      return best.category;
+    };
+  }
+  var classifyExpense = fit(familyTraining);
+
+  // public/js/family-budget.js
+  function wholeTenge(source) {
+    const value = String(source).trim().replace(/[\u00a0\u202f]/g, " ");
+    if (!/^(?:\d+|\d{1,3}(?: \d{3})+)$/.test(value)) return null;
+    const number = Number(value.replaceAll(" ", ""));
+    return Number.isSafeInteger(number) ? number : null;
+  }
+  function readExpenses(text) {
+    const rows = [];
+    let total = 0;
+    for (const [index, line] of text.split(/\r?\n/).entries()) {
+      const cleaned = line.trim().replace(/\s*(?:₸|тг\.?|тенге|теңге|KZT)$/iu, "").trim();
+      if (!line.trim()) continue;
+      const explicit = cleaned.match(/^(.+?)\s*(?:[—–:;]|\s-\s)\s*(.*)$/u);
+      const parts = explicit || cleaned.match(/^(.*?)\s+(\d[\d\s]*)$/u);
+      const description = parts?.[1].trim();
+      const amount = parts ? wholeTenge(parts[2]) : null;
+      if (!description || !/\p{L}/u.test(description) || amount === null || amount === 0 || /[—–:\-;,]\s*$/u.test(description) || !Number.isSafeInteger(total + amount)) {
+        return { errorLine: index + 1 };
+      }
+      total += amount;
+      rows.push({ description, amount });
+    }
+    return { rows };
+  }
+  function planBudget(income, target, months, rows) {
+    const expenses = rows.reduce((sum, row) => sum + row.amount, 0);
+    const balance = income - expenses;
+    const monthlyGoal = Math.ceil(target / months);
+    const afterGoal = balance - monthlyGoal;
+    if (!Number.isSafeInteger(afterGoal)) throw new RangeError("budget exceeds safe arithmetic");
+    return {
+      expenses,
+      balance,
+      monthlyGoal,
+      afterGoal,
+      monthsAtCapacity: target && balance > 0 ? Math.ceil(target / balance) : null
+    };
+  }
+
+  // public/js/family.js
+  var labels = {
+    kk: {
+      title: "Отбасы бюджеті",
+      intro: "Бір айға кіріс пен шығынды жоспарлаңыз. ЖИ шығындарды санаттарға бөледі, ал жоспар мақсатыңызға қанша ақша қалатынын көрсетеді.",
+      planHeading: "Айлық жоспар",
+      income: "Отбасының айлық кірісі",
+      goal: "Мақсатқа әлі қажет сома",
+      months: "Мақсатқа дейінгі ай саны",
+      monthUnit: "ай",
+      expensesHeading: "Жоспарланған шығындар",
+      hint: "Әр жолға атауын және сомасын бүтін теңгемен жазыңыз. Шығын болмаса, бос қалдырыңыз.",
+      privacy: "Есептеу осы құрылғыда жүреді. Енгізген қаржы деректеріңіз сақталмайды.",
+      sample: "Отбасы мысалын енгізу",
+      calculate: "Жоспарды есептеу",
+      resultTitle: "Бір айға арналған нәтиже",
+      expenseTotal: "Барлық шығын",
+      balance: "Шығыннан кейін",
+      monthly: "Мақсатқа ай сайын",
+      after: "Мақсаттан кейінгі қалдық",
+      classTitle: "ЖИ ұсынған санаттар",
+      classHint: "Әр санатты тексеріп, қажет болса өзгертіңіз. Санат таңдалмаған шығын да жалпы сомаға кіреді.",
+      byCategory: "Санаттар бойынша",
+      unknown: "Санат таңдаңыз",
+      unassigned: "Санаты белгісіз",
+      manual: "Қолмен таңдалды",
+      noRows: "Бұл жоспарға шығын енгізілмеді.",
+      categories: { food: "Азық-түлік", housing: "Тұрғын үй", transport: "Көлік", health: "Денсаулық", education: "Білім", other: "Басқа" },
+      examples: ["Пәтерақы — 90 000", "Азық-түлік — 85 000", "Автобус билеті — 20 000", "Дәріхана — 15 000", "Оқу ақысы — 30 000"],
+      badIncome: "Айлық кірісті нөл немесе одан үлкен бүтін теңгемен енгізіңіз.",
+      badGoal: "Мақсатқа қажет соманы бүтін теңгемен енгізіңіз немесе бос қалдырыңыз.",
+      badMonths: "Мақсатқа дейін кемінде бір толық ай көрсетіңіз.",
+      badLine: (n) => n + "-жолды тексеріңіз. Мысалы, «Пәтерақы — 90 000». Сома нөлден үлкен бүтін теңгемен беріледі.",
+      tooBig: "Сома дәл есептеу шегінен асты. Енгізілген сандарды тексеріңіз.",
+      fit: (n) => "Осы жоспар бойынша айлық шығын мен жинаққа ақша жетеді. Одан кейін " + n + " қалады.",
+      gap: (n) => "Мақсатты көрсетілген мерзімде орындау үшін айлық жоспарда " + n + " жетіспейді.",
+      slower: (n) => "Шығыннан қалған соманың бәрін жинасаңыз, мақсатқа " + n + " айда жетесіз.",
+      deficit: (n) => "Жинақты есептемегенде де, жоспарланған шығын кірістен " + n + " артық.",
+      noGoal: "Жинақ мақсаты қойылмады. Қалдыққа қол жеткізу үшін кіріс пен шығын жоспарын ұстану қажет.",
+      atLimit: "Айлық кіріс жоспарланған шығын мен жинақты дәл жабады."
+    },
+    ru: {
+      title: "Семейный бюджет",
+      intro: "Спланируйте доходы и расходы на месяц. ИИ разнесёт траты по категориям, а расчёт покажет, сколько семья сможет отложить на цель.",
+      planHeading: "План на месяц",
+      income: "Доход семьи за месяц",
+      goal: "Сколько ещё нужно накопить",
+      months: "Месяцев до цели",
+      monthUnit: "мес.",
+      expensesHeading: "Планируемые расходы",
+      hint: "На каждой строке укажите название и сумму в целых тенге. Если расходов нет, оставьте поле пустым.",
+      privacy: "Расчёт выполняется на вашем устройстве. Введённые финансовые данные не сохраняются.",
+      sample: "Подставить пример семьи",
+      calculate: "Рассчитать план",
+      resultTitle: "Результат за месяц",
+      expenseTotal: "Все расходы",
+      balance: "После расходов",
+      monthly: "На цель в месяц",
+      after: "Остаток после цели",
+      classTitle: "Категории от ИИ",
+      classHint: "Проверьте и при необходимости измените категорию. Расход без категории тоже включён в общий итог.",
+      byCategory: "Расходы по категориям",
+      unknown: "Выберите категорию",
+      unassigned: "Без категории",
+      manual: "Выбрано вручную",
+      noRows: "В этом плане пока нет расходов.",
+      categories: { food: "Продукты", housing: "Жильё", transport: "Транспорт", health: "Здоровье", education: "Образование", other: "Другое" },
+      examples: ["Аренда квартиры — 90 000", "Продукты — 85 000", "Билет на автобус — 20 000", "Аптека — 15 000", "Оплата учёбы — 30 000"],
+      badIncome: "Введите доход в целых тенге. При отсутствии дохода укажите 0.",
+      badGoal: "Введите сумму цели в целых тенге или оставьте поле пустым.",
+      badMonths: "Укажите целое количество месяцев до цели, минимум один.",
+      badLine: (n) => "Проверьте строку " + n + ". Пример записи — «Аренда квартиры — 90 000». Сумма должна быть больше нуля, в целых тенге.",
+      tooBig: "Сумма превышает предел точного расчёта. Проверьте введённые значения.",
+      fit: (n) => "Дохода хватает на запланированные расходы и взнос на цель. Останется " + n + ".",
+      gap: (n) => "Чтобы достичь цели в указанный срок, в месячном плане не хватает " + n + ".",
+      slower: (n) => "Если направлять весь остаток после расходов на цель, потребуется месяцев: " + n + ".",
+      deficit: (n) => "Планируемые расходы превышают доход на " + n + " ещё до взноса на цель.",
+      noGoal: "Цель накоплений пока не задана. Остаток рассчитан по указанным доходам и расходам.",
+      atLimit: "Доход в точности покрывает запланированные расходы и взнос на цель."
+    }
+  };
+  var get = (id) => document.getElementById(id);
+  var money = (n) => new Intl.NumberFormat("ru-RU", { maximumFractionDigits: 0 }).format(n) + " ₸";
+  var form = get("planner");
+  var fileMode = location.protocol === "file:";
+  var lang = new URLSearchParams(location.search).get("lang");
+  if (lang !== "ru" && lang !== "kk") {
+    try {
+      lang = localStorage.getItem("qz_lang");
+    } catch {
+    }
+    lang = lang === "ru" ? "ru" : "kk";
+  }
+  var plan = null;
+  var overrides = /* @__PURE__ */ new Map();
+  function showError(field, message) {
+    field.setAttribute("aria-invalid", "true");
+    field.setAttribute("aria-errormessage", "error");
+    get("error").textContent = message;
+    get("error").hidden = false;
+    field.focus();
+  }
+  function clearError() {
+    get("error").hidden = true;
+    for (const field of form.querySelectorAll("[aria-invalid]")) {
+      field.removeAttribute("aria-invalid");
+      field.removeAttribute("aria-errormessage");
+    }
+  }
+  function clearResult() {
+    clearError();
+    plan = null;
+    get("results").hidden = true;
+  }
+  function describeOutcome() {
+    const ui = labels[lang], result = plan.totals;
+    if (result.balance < 0) {
+      const deficit = ui.deficit(money(-result.balance));
+      return plan.target ? deficit + " " + ui.gap(money(-result.afterGoal)) : deficit;
+    }
+    if (plan.target === 0) return ui.noGoal;
+    if (result.afterGoal < 0) return ui.gap(money(-result.afterGoal)) + (result.monthsAtCapacity ? " " + ui.slower(result.monthsAtCapacity) : "");
+    return result.afterGoal === 0 ? ui.atLimit : ui.fit(money(result.afterGoal));
+  }
+  function drawSummary() {
+    const ui = labels[lang], summary = get("summary");
+    const sums = /* @__PURE__ */ new Map();
+    for (const row of plan.rows) sums.set(row.category, (sums.get(row.category) || 0) + row.amount);
+    summary.replaceChildren();
+    if (!sums.size) {
+      summary.textContent = ui.noRows;
+      return;
+    }
+    for (const [category, total] of [...sums].sort((a, b) => b[1] - a[1])) {
+      const entry = document.createElement("div");
+      entry.className = category ? "category-row" : "category-row unknown";
+      const line = document.createElement("div");
+      line.className = "category-line";
+      const label = document.createElement("span");
+      label.textContent = ui.categories[category] || ui.unassigned;
+      const value = document.createElement("strong");
+      value.textContent = money(total);
+      line.append(label, value);
+      const track = document.createElement("div");
+      track.className = "track";
+      track.setAttribute("aria-hidden", "true");
+      const fill = document.createElement("span");
+      fill.style.width = 100 * total / plan.totals.expenses + "%";
+      track.append(fill);
+      entry.append(line, track);
+      summary.append(entry);
+    }
+  }
+  function showExpenses() {
+    const ui = labels[lang], host = get("classified");
+    host.replaceChildren();
+    if (!plan.rows.length) {
+      host.textContent = ui.noRows;
+      return;
+    }
+    for (const row of plan.rows) {
+      let update = function() {
+        select.value = row.category || "";
+        select.classList.toggle("attention", !row.category);
+        amount.textContent = money(row.amount) + (overrides.has(row.key) ? " · " + ui.manual : "");
+      };
+      const entry = document.createElement("div");
+      entry.className = "entry";
+      const info = document.createElement("div");
+      const text = document.createElement("strong");
+      text.textContent = row.description;
+      const amount = document.createElement("small");
+      const select = document.createElement("select");
+      select.className = "category-select";
+      select.setAttribute("aria-label", ui.classTitle + " · " + row.description);
+      select.add(new Option(ui.unknown, ""));
+      for (const [key, name] of Object.entries(ui.categories)) select.add(new Option(name, key));
+      select.onchange = () => {
+        row.category = select.value || null;
+        if (row.category === row.prediction) overrides.delete(row.key);
+        else overrides.set(row.key, row.category);
+        update();
+        drawSummary();
+      };
+      update();
+      info.append(text, amount);
+      entry.append(info, select);
+      host.append(entry);
+    }
+  }
+  function drawPlan() {
+    get("results").hidden = false;
+    for (const [id, key] of Object.entries({ "total-expenses": "expenses", balance: "balance", "monthly-goal": "monthlyGoal", "after-goal": "afterGoal" })) {
+      get(id).textContent = money(plan.totals[key]);
+    }
+    get("after-goal").parentElement.classList.toggle("negative", plan.totals.afterGoal < 0);
+    get("insight").textContent = describeOutcome();
+    showExpenses();
+    drawSummary();
+  }
+  function readPlan(event) {
+    event.preventDefault();
+    clearResult();
+    const ui = labels[lang];
+    const income = wholeTenge(get("income").value);
+    const target = wholeTenge(get("goal").value.trim() || "0");
+    const months = target ? wholeTenge(get("months").value) : 1;
+    if (income === null) return showError(get("income"), ui.badIncome);
+    if (target === null) return showError(get("goal"), ui.badGoal);
+    if (!months) return showError(get("months"), ui.badMonths);
+    const parsed = readExpenses(get("expenses").value);
+    if (parsed.errorLine) return showError(get("expenses"), ui.badLine(parsed.errorLine));
+    const occurrences = /* @__PURE__ */ new Map();
+    const rows = parsed.rows.map((row) => {
+      const name = row.description.normalize("NFKC").toLowerCase().trim();
+      const count = (occurrences.get(name) || 0) + 1;
+      occurrences.set(name, count);
+      const key = JSON.stringify([name, count]);
+      const prediction = classifyExpense(row.description);
+      return { ...row, key, prediction, category: overrides.has(key) ? overrides.get(key) : prediction };
+    });
+    let totals;
+    try {
+      totals = planBudget(income, target, months, rows);
+    } catch (error) {
+      if (!(error instanceof RangeError)) throw error;
+      return showError(get("expenses"), ui.tooBig);
+    }
+    const activeKeys = new Set(rows.map((row) => row.key));
+    for (const key of overrides.keys()) if (!activeKeys.has(key)) overrides.delete(key);
+    plan = { target, totals, rows };
+    drawPlan();
+    get("results").focus({ preventScroll: true });
+    get("results").scrollIntoView({ block: "start" });
+  }
+  function translate() {
+    const ui = labels[lang];
+    document.documentElement.lang = lang;
+    document.title = ui.title + " · QARZHЫ";
+    for (const node of document.querySelectorAll("[data-t]")) node.textContent = ui[node.dataset.t];
+    for (const node of document.querySelectorAll("[data-lang]")) node.setAttribute("aria-pressed", String(node.dataset.lang === lang));
+    get("expenses").placeholder = ui.examples.slice(0, 2).join("\n");
+    get("brand").href = fileMode ? "#planner" : "/?lang=" + lang;
+    clearError();
+    if (plan) drawPlan();
+  }
+  for (const node of document.querySelectorAll("[data-lang]")) node.onclick = () => {
+    lang = node.dataset.lang;
+    if (!fileMode) {
+      try {
+        localStorage.setItem("qz_lang", lang);
+      } catch {
+      }
+      const url = new URL(location.href);
+      url.searchParams.set("lang", lang);
+      history.replaceState(null, "", url);
+    }
+    translate();
+  };
+  form.addEventListener("input", clearResult);
+  form.addEventListener("submit", readPlan);
+  get("sample").onclick = () => {
+    clearResult();
+    overrides.clear();
+    get("income").value = "420 000";
+    get("goal").value = "360 000";
+    get("months").value = "6";
+    get("expenses").value = labels[lang].examples.join("\n");
+  };
+  translate();
+  if (new URLSearchParams(location.search).get("example") === "1") get("sample").click();
+})();
+</script>
+</body>
+</html>

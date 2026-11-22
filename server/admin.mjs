@@ -1,0 +1,11 @@
+import { fileURLToPath } from 'node:url';
+import { resolve } from 'node:path';
+import { openDatabase } from './database.mjs';
+const root = fileURLToPath(new URL('../', import.meta.url));
+const email = process.argv[2]?.trim().toLowerCase();
+if (!email || !email.includes('@')) throw new Error('Usage: node server/admin.mjs teacher@example.kz');
+const db = openDatabase(process.env.DB_PATH || resolve(root, '.local/qarzhy.sqlite'), resolve(root, 'migrations'));
+const user = await db.prepare('SELECT id FROM users WHERE email = ?').bind(email).first();
+if (!user) throw new Error('Register this account on the local website first.');
+await db.prepare('UPDATE users SET is_admin = 1 WHERE id = ?').bind(user.id).run();
+console.log('Teacher role assigned to the specified local account.'); db.close();

@@ -48,7 +48,7 @@
           <div class="form-error" role="alert"></div>
           <div class="field"><label for="r-name">Аты-жөні</label><input id="r-name" name="name" type="text" autocomplete="name" required minlength="2" placeholder="Мысалы: Айгерім Сейітова"></div>
           <div class="field"><label for="r-email">Email</label><input id="r-email" name="email" type="email" autocomplete="email" required placeholder="name@mail.kz"></div>
-          <div class="field"><label for="r-pass">Құпиясөз</label><input id="r-pass" name="password" type="password" autocomplete="new-password" required minlength="6" placeholder="Кемінде 6 таңба"></div>
+          <div class="field"><label for="r-pass">Құпиясөз</label><input id="r-pass" name="password" type="password" autocomplete="new-password" required minlength="8" maxlength="128" placeholder="8–128 таңба / символов"></div>
           <button class="btn btn-orange btn-lg" type="submit">Тіркелу</button>
         </form>
 
@@ -64,7 +64,7 @@
     const { api, me, qs } = window.QZ;
     const safeNext = (() => {
       const n = qs("next") || "";
-      return n.startsWith("/") && !n.startsWith("//") ? n : "/cabinet";
+      try { const u = new URL(n || '/academy', location.origin); return u.origin === location.origin && n.startsWith('/') ? u.pathname + u.search + u.hash : '/academy'; } catch { return '/academy'; }
     })();
 
     const tabs = document.querySelectorAll("[data-tab]");
@@ -92,7 +92,7 @@
         err.classList.remove("is-show");
         if (!form.checkValidity()) {
           const bad = form.querySelector(":invalid");
-          err.textContent = bad.type === "email" ? "Email дұрыс емес" : bad.name === "password" ? "Құпиясөз кемінде 6 таңбадан тұруы керек" : "Барлық өрістерді толтырыңыз";
+          err.textContent = bad.type === "email" ? "Email дұрыс емес" : bad.name === "password" ? "Құпиясөздің ұзындығын тексеріңіз / Проверьте длину пароля" : "Барлық өрістерді толтырыңыз";
           err.classList.add("is-show");
           bad.focus();
           return;

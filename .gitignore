@@ -2,3 +2,7 @@ node_modules/
 .wrangler/
 .dev.vars
 .claude/
+.local/
+.env
+mobile/build/
+mobile/.dart_tool/

@@ -213,6 +213,27 @@ p { margin: 0; }
 }
 
 /* ---------- Sections ---------- */
+.hero.family-home { min-height: min(720px, 94svh); padding: calc(var(--header-h) + 60px) 0 74px; background: #143d32; }
+.family-home::before { background: radial-gradient(ellipse at 88% 16%, #345d48, transparent 59%); }
+.family-home .hero-inner { display:grid; grid-template-columns: minmax(0,1.25fr) minmax(0,.85fr); align-items:center; gap:clamp(30px, 6vw, 90px); }
+.family-home h1 { margin:0; text-shadow:none; }
+.family-home .hero-lead { max-width:570px; }
+.family-ledger { margin:0; padding:clamp(21px,3vw,38px); background:#f8f7ee; color:#143d32; border-radius:13px; box-shadow:0 18px 48px #092b222e; }
+.family-ledger figcaption { font-size:clamp(17px,1.6vw,22px); font-weight:700; line-height:1.28; }
+.ledger-label { margin:25px 0 0; font-size:14px; color:#526759; }
+.ledger-income { font-size:clamp(33px,4.1vw,62px); font-weight:750; line-height:1.1; letter-spacing:-.045em; margin:4px 0 22px; }
+.ledger-bar { display:flex; gap:3px; height:12px; border-radius:4px; overflow:hidden; }
+.ledger-bar i:nth-child(1) { flex:4; background:#416c54; } .ledger-bar i:nth-child(2) { flex:1; background:#e9ad58; } .ledger-bar i:nth-child(3) { flex:2; background:#a9c995; }
+.family-ledger dl { margin:14px 0 17px; }
+.family-ledger dl > div { display:flex; justify-content:space-between; gap:8px; padding:8px 0; border-bottom:1px solid #d4dfd0; align-items:baseline; }
+.family-ledger dt { font-size:14px; } .family-ledger dd { font-weight:700; font-size:16px; white-space:nowrap; margin:0; }
+.family-ledger a { color:#285d43; text-decoration:underline; text-underline-offset:4px; font-weight:650; }
+@media(max-width:860px) {
+  .hero.family-home { padding:calc(var(--header-h) + 34px) 0 35px; min-height:auto; }
+  .family-home .hero-inner { grid-template-columns:1fr; gap:25px; }
+  .family-home .hero-lead { margin-top:16px; } .family-home .hero-cta { margin-top:22px; }
+  .family-ledger { max-width:580px; }
+}
 .section { padding: 110px 0; position: relative; }
 .section-head { max-width: 760px; margin-bottom: 48px; }
 .section-head.center { margin-left: auto; margin-right: auto; text-align: center; }
